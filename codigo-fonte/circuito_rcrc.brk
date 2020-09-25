@@ -1,8 +1,1 @@
-<BREAKS>
-  <BP>
-    <UnitName>circuito_rcrc.lst</UnitName>
-    <Line>783</Line>
-    <Enabled>True</Enabled>
-    <Type>1</Type>
-  </BP>
-</BREAKS>
+<BREAKS/>

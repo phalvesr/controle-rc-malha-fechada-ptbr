@@ -51,14 +51,15 @@ sbit LCD_D7_Direction at TRISB5_bit;
 // Variaveis globais:
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
-unsigned int leituraAdc = 0, valorIdealAdc = 0;
+unsigned int leituraAdc = 0;
 int erroMedidas = 0, erroAnterior = 0;
-unsigned char auxiliarContagemTimerZero = 1;
+unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
 char valorPwm = 0;
-double ganhoProporcional = 3.3,
+double ganhoProporcional = 4.0,
        ganhoDerivativo = 10.0,
        ganhoIntegral = 60.0,
-       somatoriaErro = 0.0;
+       somatoriaErro = 0.0,
+       valorIdealAdc = 0.0;
 
 // ============================================================================
 // Declaração de funções:
@@ -80,7 +81,6 @@ void interrupt() {
      // Este laço é validado a cada 10ms
      if (TMR0IF_bit) {
        auxiliarContagemTimerZero++;
-       
        if (dentroDoMenuUm) {
          flagCalculoControlador = 1;
        }
@@ -89,8 +89,11 @@ void interrupt() {
        if (auxiliarContagemTimerZero == 10) {
          acoesACadaCemMs();
 
-         auxiliarContagemTimerZero = 1;
+         auxiliarContagemTimerZero = 0;
        }
+
+
+
        TMR0IF_bit = 0;
        TMR0 = 99;
      }
@@ -180,7 +183,7 @@ void configurarRegistradores() {
   CMCON = 0x07;
   ADCON0 = 0b00000001;
   ADCON1 = 0b00001110;
-  
+
   TRISC.F0 = 0;
   PORTC.F0 = 0;
   
@@ -286,14 +289,15 @@ void menuVout() {
 
   
   flagCalculoLcd = 1;
-  
   do {
     setSetPoint();
-    
+
     if (flagCalculoControlador) {
-      valorIdealAdc = tensaoDesejada * 20.4;
-      leituraAdc = Adc_Read(0);
-      erroMedidas = (valorIdealAdc - leituraAdc) / 4;
+      leituraAdc = Adc_Get_Sample(0);
+      if (leituraAdc > 550) pinoDebug = 1;
+      else pinoDebug = 0;
+      valorIdealAdc = (int) tensaoDesejada * 20.4;
+      erroMedidas = ((int) valorIdealAdc - leituraAdc) >> 2;
       
       
       valorPwm = ganhoProporcional * erroMedidas;
@@ -301,7 +305,6 @@ void menuVout() {
       if (valorPwm > 255) valorPwm = 255;
       
       PWM1_Set_Duty(valorPwm);
-      
       flagCalculoControlador = 0;
     }
   }  while (!flagSaidaMenu);
@@ -383,6 +386,5 @@ void calculoLcd() {
   Lcd_Chr(2, 12, dezenaLcd);
   Lcd_Chr(2, 13, '.');
   Lcd_Chr(2, 14, unidadeLcd);
-  dentroDoMenuTres = 0;
 
 }

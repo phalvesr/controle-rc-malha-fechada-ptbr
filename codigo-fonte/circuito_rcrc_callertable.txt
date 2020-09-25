@@ -64,6 +64,8 @@ main
 						Delay_1us
 						Delay_5500us
 						Delay_50us
+		ADC_Get_Sample
+			Delay_22us
 		int2double
 			NRM3232
 				RES032
@@ -73,10 +75,8 @@ main
 			RES032
 			SETFOV32
 			SETFUN32
-		double2word
+		double2int
 			SETIOV3224
-		ADC_Read
-			Delay_22us
 		double2byte
 			SETIOV3224
 		PWM1_Set_Duty

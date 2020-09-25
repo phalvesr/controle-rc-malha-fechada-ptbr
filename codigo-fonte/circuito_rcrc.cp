@@ -18,13 +18,15 @@ sbit LCD_D7_Direction at TRISB5_bit;
 
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
-unsigned int leituraAdc = 0, valorIdealAdc = 0;
-int erroMedidas = 0;
-unsigned char auxiliarContagemTimerZero = 1;
+unsigned int leituraAdc = 0;
+int erroMedidas = 0, erroAnterior = 0;
+unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
 char valorPwm = 0;
-double ganhoProporcional = 3.3,
+double ganhoProporcional = 4.0,
  ganhoDerivativo = 10.0,
- ganhoIntegral = 60.0;
+ ganhoIntegral = 60.0,
+ somatoriaErro = 0.0,
+ valorIdealAdc = 0.0;
 
 
 
@@ -46,7 +48,6 @@ void interrupt() {
 
  if (TMR0IF_bit) {
  auxiliarContagemTimerZero++;
-
  if ( flagsA.F6 ) {
   flagsB.F1  = 1;
  }
@@ -55,8 +56,11 @@ void interrupt() {
  if (auxiliarContagemTimerZero == 10) {
  acoesACadaCemMs();
 
- auxiliarContagemTimerZero = 1;
+ auxiliarContagemTimerZero = 0;
  }
+
+
+
  TMR0IF_bit = 0;
  TMR0 = 99;
  }
@@ -159,7 +163,7 @@ void configurarRegistradores() {
  INTCON = 0b11100000;
  TMR0 = 99;
  OPTION_REG = 0b10000111;
-#line 212 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
+#line 216 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 }
 
 void iniciarLcd() {
@@ -236,21 +240,22 @@ void menuVout() {
 
 
   flagsA.F5  = 1;
-
  do {
  setSetPoint();
 
  if ( flagsB.F1 ) {
- valorIdealAdc = tensaoDesejada * 20.4;
- leituraAdc = Adc_Read(0);
- erroMedidas = (valorIdealAdc - leituraAdc) / 2;
+ leituraAdc = Adc_Get_Sample(0);
+ if (leituraAdc > 550)  PORTC.F0  = 1;
+ else  PORTC.F0  = 0;
+ valorIdealAdc = (int) tensaoDesejada * 20.4;
+ erroMedidas = ((int) valorIdealAdc - leituraAdc) >> 2;
+
 
  valorPwm = ganhoProporcional * erroMedidas;
 
  if (valorPwm > 255) valorPwm = 255;
 
  PWM1_Set_Duty(valorPwm);
-
   flagsB.F1  = 0;
  }
  } while (! flagsA.F4 );
@@ -332,6 +337,5 @@ void calculoLcd() {
  Lcd_Chr(2, 12, dezenaLcd);
  Lcd_Chr(2, 13, '.');
  Lcd_Chr(2, 14, unidadeLcd);
-  flagsB.F0  = 0;
 
 }

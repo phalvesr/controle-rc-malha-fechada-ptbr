@@ -141,6 +141,7 @@ chs1
 chs1_bit
 chs2
 chs2_bit
+cicloscontrolador
 cis
 cis_bit
 cke
@@ -230,6 +231,7 @@ eeif_bit
 eepgd
 eepgd_bit
 equals_double
+erroanterior
 erromedidas
 f
 ferr
@@ -488,6 +490,7 @@ setiov3224
 setsetpoint
 smp
 smp_bit
+somatoriaerro
 spbrg
 spen
 spen_bit
