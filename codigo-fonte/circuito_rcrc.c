@@ -24,6 +24,7 @@
 #define dentroDoMenuUm flagsA.F6
 #define dentroDoMenuDois flagsA.F7
 #define dentroDoMenuTres flagsB.F0
+#define flagCalculoControlador flagsB.F1
 #define pinoDebug PORTC.F0
 #define botaoIncremento PORTB.F0
 #define botaoDecremento PORTB.F3
@@ -50,9 +51,14 @@ sbit LCD_D7_Direction at TRISB5_bit;
 // Variaveis globais:
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
-unsigned int leituraAdc = 0;
-unsigned char auxiliarContagemTimer0 = 1;
-char valorPWM = 0;
+unsigned int leituraAdc = 0, valorIdealAdc = 0;
+int erroMedidas = 0, erroAnterior = 0;
+unsigned char auxiliarContagemTimerZero = 1;
+char valorPwm = 0;
+double ganhoProporcional = 3.3,
+       ganhoDerivativo = 10.0,
+       ganhoIntegral = 60.0,
+       somatoriaErro = 0.0;
 
 // ============================================================================
 // Declaração de funções:
@@ -73,13 +79,17 @@ void interrupt() {
 
      // Este laço é validado a cada 10ms
      if (TMR0IF_bit) {
-       auxiliarContagemTimer0++;
-
+       auxiliarContagemTimerZero++;
+       
+       if (dentroDoMenuUm) {
+         flagCalculoControlador = 1;
+       }
+       
        // Este laço é validado a cada 100ms
-       if (auxiliarContagemTimer0 == 10) {
+       if (auxiliarContagemTimerZero == 10) {
          acoesACadaCemMs();
-         flagCalculoLcd = 1;
-         auxiliarContagemTimer0 = 1;
+
+         auxiliarContagemTimerZero = 1;
        }
        TMR0IF_bit = 0;
        TMR0 = 99;
@@ -273,20 +283,31 @@ void menuVout() {
   Lcd_Chr_Cp(':');
   Lcd_Chr(2, 15, 'V');
   
-  calculoLcd();
+
   
   flagCalculoLcd = 1;
   
   do {
     setSetPoint();
     
-    // (Percent*255)/100
-    valorPWM = (((tensaoDesejada * 4))*255) / 100;
-    
-    PWM1_Set_Duty(valorPWM);
+    if (flagCalculoControlador) {
+      valorIdealAdc = tensaoDesejada * 20.4;
+      leituraAdc = Adc_Read(0);
+      erroMedidas = (valorIdealAdc - leituraAdc) / 4;
+      
+      
+      valorPwm = ganhoProporcional * erroMedidas;
+      
+      if (valorPwm > 255) valorPwm = 255;
+      
+      PWM1_Set_Duty(valorPwm);
+      
+      flagCalculoControlador = 0;
+    }
   }  while (!flagSaidaMenu);
 
   Lcd_Cmd(_LCD_CLEAR);
+  PWM1_Set_Duty(0);
   tensaoDesejada = 0;
   dentroDoMenuUm = 0;
 }
@@ -316,6 +337,39 @@ void menuNumeroEletrons() {
   dentroDoMenuDois = 0;
 }
 
+void setSetPoint() {
+  if (!botaoIncremento) {
+      flagIncremento = 1;
+    }
+
+    if (botaoIncremento && flagIncremento) {
+      flagIncremento = 0;
+      tensaoDesejada++;
+      if (tensaoDesejada > 50) {
+        tensaoDesejada = 50;
+      }
+      flagCalculoLcd = 1;
+    }
+
+    if (!botaoDecremento) {
+      flagDecremento = 1;
+    }
+
+    if (botaoDecremento && flagDecremento) {
+       flagDecremento = 0;
+       tensaoDesejada--;
+       if (tensaoDesejada < 0) {
+         tensaoDesejada = 0;
+       }
+       flagCalculoLcd = 1;
+    }
+
+    if (flagCalculoLcd) {
+      calculoLcd();
+      flagCalculoLcd = 0;
+    }
+}
+
 void calculoLcd() {
 
   char dezenaLcd, unidadeLcd;
@@ -331,35 +385,4 @@ void calculoLcd() {
   Lcd_Chr(2, 14, unidadeLcd);
   dentroDoMenuTres = 0;
 
-}
-
-void setSetPoint() {
-  if (!botaoIncremento) {
-      flagIncremento = 1;
-    }
-
-    if (botaoIncremento && flagIncremento) {
-      flagIncremento = 0;
-      tensaoDesejada++;
-      if (tensaoDesejada > 25) {
-        tensaoDesejada = 25;
-      }
-    }
-
-    if (!botaoDecremento) {
-      flagDecremento = 1;
-    }
-
-    if (botaoDecremento && flagDecremento) {
-       flagDecremento = 0;
-       tensaoDesejada--;
-       if (tensaoDesejada < 0) {
-         tensaoDesejada = 0;
-       }
-    }
-
-    if (flagCalculoLcd) {
-      calculoLcd();
-      flagCalculoLcd = 0;
-    }
 }

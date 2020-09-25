@@ -1,5 +1,5 @@
-#line 1 "C:/Users/Clesio/Documents/N7/lab-simulacoes/projeto-1/codigo-fonte/circuito_rcrc.c"
-#line 35 "C:/Users/Clesio/Documents/N7/lab-simulacoes/projeto-1/codigo-fonte/circuito_rcrc.c"
+#line 1 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
+#line 36 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 sbit LCD_RS at RA2_bit;
 sbit LCD_EN at RA3_bit;
 sbit LCD_D4 at RB1_bit;
@@ -18,9 +18,13 @@ sbit LCD_D7_Direction at TRISB5_bit;
 
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
-unsigned int leituraAdc = 0;
-unsigned char auxiliarContagemTimer0 = 1;
-char valorPWM = 0;
+unsigned int leituraAdc = 0, valorIdealAdc = 0;
+int erroMedidas = 0;
+unsigned char auxiliarContagemTimerZero = 1;
+char valorPwm = 0;
+double ganhoProporcional = 3.3,
+ ganhoDerivativo = 10.0,
+ ganhoIntegral = 60.0;
 
 
 
@@ -41,13 +45,17 @@ void interrupt() {
 
 
  if (TMR0IF_bit) {
- auxiliarContagemTimer0++;
+ auxiliarContagemTimerZero++;
+
+ if ( flagsA.F6 ) {
+  flagsB.F1  = 1;
+ }
 
 
- if (auxiliarContagemTimer0 == 10) {
+ if (auxiliarContagemTimerZero == 10) {
  acoesACadaCemMs();
-  flagsA.F5  = 1;
- auxiliarContagemTimer0 = 1;
+
+ auxiliarContagemTimerZero = 1;
  }
  TMR0IF_bit = 0;
  TMR0 = 99;
@@ -151,7 +159,7 @@ void configurarRegistradores() {
  INTCON = 0b11100000;
  TMR0 = 99;
  OPTION_REG = 0b10000111;
-#line 203 "C:/Users/Clesio/Documents/N7/lab-simulacoes/projeto-1/codigo-fonte/circuito_rcrc.c"
+#line 212 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 }
 
 void iniciarLcd() {
@@ -225,20 +233,30 @@ void menuVout() {
  Lcd_Chr_Cp(':');
  Lcd_Chr(2, 15, 'V');
 
- calculoLcd();
+
 
   flagsA.F5  = 1;
 
  do {
  setSetPoint();
 
+ if ( flagsB.F1 ) {
+ valorIdealAdc = tensaoDesejada * 20.4;
+ leituraAdc = Adc_Read(0);
+ erroMedidas = (valorIdealAdc - leituraAdc) / 2;
 
- valorPWM = (((tensaoDesejada * 4))*255) / 100;
+ valorPwm = ganhoProporcional * erroMedidas;
 
- PWM1_Set_Duty(valorPWM);
+ if (valorPwm > 255) valorPwm = 255;
+
+ PWM1_Set_Duty(valorPwm);
+
+  flagsB.F1  = 0;
+ }
  } while (! flagsA.F4 );
 
  Lcd_Cmd(_LCD_CLEAR);
+ PWM1_Set_Duty(0);
  tensaoDesejada = 0;
   flagsA.F6  = 0;
 }
@@ -268,6 +286,39 @@ void menuNumeroEletrons() {
   flagsA.F7  = 0;
 }
 
+void setSetPoint() {
+ if (! PORTB.F0 ) {
+  flagsA.F1  = 1;
+ }
+
+ if ( PORTB.F0  &&  flagsA.F1 ) {
+  flagsA.F1  = 0;
+ tensaoDesejada++;
+ if (tensaoDesejada > 50) {
+ tensaoDesejada = 50;
+ }
+  flagsA.F5  = 1;
+ }
+
+ if (! PORTB.F3 ) {
+  flagsA.F2  = 1;
+ }
+
+ if ( PORTB.F3  &&  flagsA.F2 ) {
+  flagsA.F2  = 0;
+ tensaoDesejada--;
+ if (tensaoDesejada < 0) {
+ tensaoDesejada = 0;
+ }
+  flagsA.F5  = 1;
+ }
+
+ if ( flagsA.F5 ) {
+ calculoLcd();
+  flagsA.F5  = 0;
+ }
+}
+
 void calculoLcd() {
 
  char dezenaLcd, unidadeLcd;
@@ -283,35 +334,4 @@ void calculoLcd() {
  Lcd_Chr(2, 14, unidadeLcd);
   flagsB.F0  = 0;
 
-}
-
-void setSetPoint() {
- if (! PORTB.F0 ) {
-  flagsA.F1  = 1;
- }
-
- if ( PORTB.F0  &&  flagsA.F1 ) {
-  flagsA.F1  = 0;
- tensaoDesejada++;
- if (tensaoDesejada > 25) {
- tensaoDesejada = 25;
- }
- }
-
- if (! PORTB.F3 ) {
-  flagsA.F2  = 1;
- }
-
- if ( PORTB.F3  &&  flagsA.F2 ) {
-  flagsA.F2  = 0;
- tensaoDesejada--;
- if (tensaoDesejada < 0) {
- tensaoDesejada = 0;
- }
- }
-
- if ( flagsA.F5 ) {
- calculoLcd();
-  flagsA.F5  = 0;
- }
 }

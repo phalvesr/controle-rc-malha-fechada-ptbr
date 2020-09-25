@@ -65,7 +65,7 @@ adon
 adon_bit
 adresh
 adresl
-auxiliarcontagemtimer0
+auxiliarcontagemtimerzero
 b0
 b1
 b2
@@ -230,6 +230,7 @@ eeif_bit
 eepgd
 eepgd_bit
 equals_double
+erromedidas
 f
 ferr
 ferr_bit
@@ -238,6 +239,9 @@ flagsa
 flagsb
 fsr
 fsrptr
+ganhoderivativo
+ganhointegral
+ganhoproporcional
 gcen
 gcen_bit
 get_fosc_khz
@@ -645,6 +649,7 @@ uart1_read_text
 uart1_tx_idle
 uart1_write
 uart1_write_text
+valoridealadc
 valorpwm
 vdelay_advanced_ms
 vdelay_ms

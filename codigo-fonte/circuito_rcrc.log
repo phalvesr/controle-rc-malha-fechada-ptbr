@@ -1,13 +1,13 @@
-0	1	mikroCPIC1618.exe -MSF -DBG -pP16F876A -DL -O11111114 -fo16 -N"C:\Users\Clesio\Documents\N7\lab-simulacoes\projeto-1\codigo-fonte\circuito_rcrc.mcppi" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" -SP"C:\Users\Clesio\Documents\N7\lab-simulacoes\projeto-1\codigo-fonte\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" "circuito_rcrc.c" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl" "__Lib_ADC_A_C.mcl" "__Lib_PWM_c21.mcl" "__Lib_UART_c67.mcl" "__Lib_LcdConsts.mcl" "__Lib_Lcd.mcl"	 
+0	1	mikroCPIC1618.exe -MSF -DBG -pP16F876A -DL -O11111114 -fo16 -N"C:\Users\Clesio\Documents\N7\controle-rc-malha-fechada-ptbr\codigo-fonte\circuito_rcrc.mcppi" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" -SP"C:\Users\Clesio\Documents\N7\controle-rc-malha-fechada-ptbr\codigo-fonte\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" "circuito_rcrc.c" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl" "__Lib_ADC_A_C.mcl" "__Lib_PWM_c21.mcl" "__Lib_UART_c67.mcl" "__Lib_LcdConsts.mcl" "__Lib_Lcd.mcl"	 
 hint: 0	1139	Available RAM: 352 [bytes], Available ROM: 8192 [bytes]	 
 diagnostics: 0	122	Compilation Started	circuito_rcrc.c
-warning: 97	1509	Generated baud rate is 9615 bps (error = 0.16 percent)	circuito_rcrc.c
-diagnostics: 365	123	Compiled Successfully	circuito_rcrc.c
-hint: 321	1164	Variable 'dezenaLcd' has been eliminated by optimizer	circuito_rcrc.c
-diagnostics: 0	127	All files Compiled in 78 ms	 
-hint: 0	1144	Used RAM (bytes): 45 (13%)  Free RAM (bytes): 307 (87%)	Used RAM (bytes): 45 (13%)  Free RAM (bytes): 307 (87%)
-hint: 0	1144	Used ROM (program words): 1295 (16%)  Free ROM (program words): 6897 (84%)	Used ROM (program words): 1295 (16%)  Free ROM (program words): 6897 (84%)
+warning: 106	1509	Generated baud rate is 9615 bps (error = 0.16 percent)	circuito_rcrc.c
+diagnostics: 386	123	Compiled Successfully	circuito_rcrc.c
+hint: 373	1164	Variable 'dezenaLcd' has been eliminated by optimizer	circuito_rcrc.c
+diagnostics: 0	127	All files Compiled in 79 ms	 
+hint: 0	1144	Used RAM (bytes): 57 (16%)  Free RAM (bytes): 295 (84%)	Used RAM (bytes): 57 (16%)  Free RAM (bytes): 295 (84%)
+hint: 0	1144	Used ROM (program words): 1626 (20%)  Free ROM (program words): 6566 (80%)	Used ROM (program words): 1626 (20%)  Free ROM (program words): 6566 (80%)
 diagnostics: 0	125	Project Linked Successfully	circuito_rcrc.mcppi
 diagnostics: 0	128	Linked in 62 ms	 
 diagnostics: 0	129	Project 'circuito_rcrc.mcppi' completed: 156 ms	 
-diagnostics: 0	103	Finished successfully: 24 set 2020, 17:40:36	circuito_rcrc.mcppi
+diagnostics: 0	103	Finished successfully: 25 set 2020, 14:07:39	circuito_rcrc.mcppi
