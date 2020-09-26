@@ -231,7 +231,6 @@ eeif_bit
 eepgd
 eepgd_bit
 equals_double
-erroanterior
 erromedidas
 f
 ferr
@@ -266,6 +265,7 @@ inte
 inte_bit
 intedg
 intedg_bit
+integral
 interrupt
 intf
 intf_bit
@@ -490,7 +490,6 @@ setiov3224
 setsetpoint
 smp
 smp_bit
-somatoriaerro
 spbrg
 spen
 spen_bit
@@ -652,6 +651,7 @@ uart1_read_text
 uart1_tx_idle
 uart1_write
 uart1_write_text
+ultimoerro
 valoridealadc
 valorpwm
 vdelay_advanced_ms

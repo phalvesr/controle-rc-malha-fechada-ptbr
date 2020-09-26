@@ -52,14 +52,15 @@ sbit LCD_D7_Direction at TRISB5_bit;
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
 unsigned int leituraAdc = 0;
-int erroMedidas = 0, erroAnterior = 0;
+int erroMedidas = 0;
 unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
-char valorPwm = 0;
-double ganhoProporcional = 4.0,
+double valorPwm = 0.0;
+double ultimoErro = 0.0;
+double ganhoProporcional = 60.0,
        ganhoDerivativo = 10.0,
-       ganhoIntegral = 60.0,
-       somatoriaErro = 0.0,
-       valorIdealAdc = 0.0;
+       ganhoIntegral = 30.0,
+       valorIdealAdc = 0.0,
+       integral = 0.0;
 
 // ============================================================================
 // Declaração de funções:
@@ -115,21 +116,21 @@ void main() {
     
     testarBotoes();
     switch(selecaoModo) {
-      case 0:    
+      case 0:
         Lcd_Chr (1,1, '<');
         Lcd_Chr (1,16, '>');
         Lcd_Chr (1,6, 'V');
         Lcd_Chr_Cp ('o');
         Lcd_Chr_Cp ('u');
         Lcd_Chr_Cp ('t');
-              
+
         if (flagEntradaMenu) {
           dentroDoMenuUm = 1;
           dentroDoMenuDois = 0;
           dentroDoMenuTres = 0;
           menuVout();
         }
-              
+
         break;
       case 1:
         Lcd_Chr (1,1, '<');
@@ -139,14 +140,14 @@ void main() {
         Lcd_Chr_Cp ('r');
         Lcd_Chr_Cp ('g');
         Lcd_Chr_Cp ('a');
-              
+
         if (flagEntradaMenu) {
           dentroDoMenuUm = 0;
           dentroDoMenuDois = 1;
           dentroDoMenuTres = 0;
           menuCargaCoulomb();
         }
-              
+
         break;
       case 2:
         Lcd_Chr (1,1, '<');
@@ -159,14 +160,14 @@ void main() {
         Lcd_Chr_Cp ('o');
         Lcd_Chr_Cp ('n');
         Lcd_Chr_Cp ('s');
-              
+
         if (flagEntradaMenu) {
           dentroDoMenuUm = 0;
           dentroDoMenuDois = 0;
           dentroDoMenuTres = 1;
           menuNumeroEletrons();
         }
-        
+
         break;
     }
   }
@@ -182,7 +183,7 @@ void configurarRegistradores() {
   TRISA = 0b00110011;
   CMCON = 0x07;
   ADCON0 = 0b00000001;
-  ADCON1 = 0b00001110;
+  ADCON1 = 0b10001110;
 
   TRISC.F0 = 0;
   PORTC.F0 = 0;
@@ -211,7 +212,7 @@ void configurarRegistradores() {
               | Tovf = (256 - TMR0) * prescaler * 4/fosc   |
                --------------------------------------------
   */
-  
+
   
 }
 
@@ -293,18 +294,21 @@ void menuVout() {
     setSetPoint();
 
     if (flagCalculoControlador) {
-      leituraAdc = Adc_Get_Sample(0);
-      if (leituraAdc > 550) pinoDebug = 1;
-      else pinoDebug = 0;
+      leituraAdc = ADC_Get_Sample(0);
       valorIdealAdc = (int) tensaoDesejada * 20.4;
-      erroMedidas = ((int) valorIdealAdc - leituraAdc) >> 2;
       
+
+      erroMedidas = (valorIdealAdc - leituraAdc);
+      ultimoErro = erroMedidas;
+      integral = ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
+
       
-      valorPwm = ganhoProporcional * erroMedidas;
+      valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
       
       if (valorPwm > 255) valorPwm = 255;
-      
+      //UART1_Write('B');
       PWM1_Set_Duty(valorPwm);
+      ultimoErro = erroMedidas;
       flagCalculoControlador = 0;
     }
   }  while (!flagSaidaMenu);
@@ -348,8 +352,8 @@ void setSetPoint() {
     if (botaoIncremento && flagIncremento) {
       flagIncremento = 0;
       tensaoDesejada++;
-      if (tensaoDesejada > 50) {
-        tensaoDesejada = 50;
+      if (tensaoDesejada > 25) {
+        tensaoDesejada = 25;
       }
       flagCalculoLcd = 1;
     }

@@ -19,14 +19,15 @@ sbit LCD_D7_Direction at TRISB5_bit;
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
 unsigned int leituraAdc = 0;
-int erroMedidas = 0, erroAnterior = 0;
+int erroMedidas = 0;
 unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
-char valorPwm = 0;
-double ganhoProporcional = 4.0,
+double valorPwm = 0.0;
+double ultimoErro = 0.0;
+double ganhoProporcional = 60.0,
  ganhoDerivativo = 10.0,
- ganhoIntegral = 60.0,
- somatoriaErro = 0.0,
- valorIdealAdc = 0.0;
+ ganhoIntegral = 30.0,
+ valorIdealAdc = 0.0,
+ integral = 0.0;
 
 
 
@@ -149,7 +150,7 @@ void configurarRegistradores() {
  TRISA = 0b00110011;
  CMCON = 0x07;
  ADCON0 = 0b00000001;
- ADCON1 = 0b00001110;
+ ADCON1 = 0b10001110;
 
  TRISC.F0 = 0;
  PORTC.F0 = 0;
@@ -163,7 +164,7 @@ void configurarRegistradores() {
  INTCON = 0b11100000;
  TMR0 = 99;
  OPTION_REG = 0b10000111;
-#line 216 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
+#line 217 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 }
 
 void iniciarLcd() {
@@ -244,18 +245,21 @@ void menuVout() {
  setSetPoint();
 
  if ( flagsB.F1 ) {
- leituraAdc = Adc_Get_Sample(0);
- if (leituraAdc > 550)  PORTC.F0  = 1;
- else  PORTC.F0  = 0;
+ leituraAdc = ADC_Get_Sample(0);
  valorIdealAdc = (int) tensaoDesejada * 20.4;
- erroMedidas = ((int) valorIdealAdc - leituraAdc) >> 2;
 
 
- valorPwm = ganhoProporcional * erroMedidas;
+ erroMedidas = (valorIdealAdc - leituraAdc);
+ ultimoErro = erroMedidas;
+ integral = ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
+
+
+ valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
 
  if (valorPwm > 255) valorPwm = 255;
 
  PWM1_Set_Duty(valorPwm);
+ ultimoErro = erroMedidas;
   flagsB.F1  = 0;
  }
  } while (! flagsA.F4 );
@@ -299,8 +303,8 @@ void setSetPoint() {
  if ( PORTB.F0  &&  flagsA.F1 ) {
   flagsA.F1  = 0;
  tensaoDesejada++;
- if (tensaoDesejada > 50) {
- tensaoDesejada = 50;
+ if (tensaoDesejada > 25) {
+ tensaoDesejada = 25;
  }
   flagsA.F5  = 1;
  }
