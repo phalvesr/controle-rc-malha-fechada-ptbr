@@ -300,8 +300,10 @@ void menuVout() {
 
       erroMedidas = (valorIdealAdc - leituraAdc);
       ultimoErro = erroMedidas;
-      integral = ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
-
+      integral += ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
+      if (integral > 511) {
+        integral = 0;
+      }
       
       valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
       

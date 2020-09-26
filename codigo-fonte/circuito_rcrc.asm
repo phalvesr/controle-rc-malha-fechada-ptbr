@@ -41,7 +41,7 @@ L_interrupt2:
 L_interrupt0:
 ;circuito_rcrc.c,102 :: 		}
 L_end_interrupt:
-L__interrupt54:
+L__interrupt55:
 	MOVF       ___savePCLATH+0, 0
 	MOVWF      PCLATH+0
 	SWAPF      ___saveSTATUS+0, 0
@@ -400,7 +400,7 @@ L_testarBotoes14:
 	GOTO       L_testarBotoes17
 	BTFSS      PORTB+0, 0
 	GOTO       L_testarBotoes17
-L__testarBotoes50:
+L__testarBotoes51:
 ;circuito_rcrc.c,240 :: 		flagIncremento = 0;
 	BCF        _flagsA+0, 1
 ;circuito_rcrc.c,241 :: 		selecaoModo++;
@@ -423,7 +423,7 @@ L_testarBotoes18:
 	GOTO       L_testarBotoes21
 	BTFSS      PORTB+0, 3
 	GOTO       L_testarBotoes21
-L__testarBotoes49:
+L__testarBotoes50:
 ;circuito_rcrc.c,250 :: 		flagDecremento = 0;
 	BCF        _flagsA+0, 2
 ;circuito_rcrc.c,251 :: 		selecaoModo--;
@@ -646,18 +646,10 @@ L_menuVout27:
 	CALL       _Sub_32x32_FP+0
 	CALL       _double2int+0
 	MOVF       R0+0, 0
-	MOVWF      FLOC__menuVout+4
-	MOVF       R0+1, 0
-	MOVWF      FLOC__menuVout+5
-	MOVF       FLOC__menuVout+4, 0
 	MOVWF      _erroMedidas+0
-	MOVF       FLOC__menuVout+5, 0
+	MOVF       R0+1, 0
 	MOVWF      _erroMedidas+1
 ;circuito_rcrc.c,302 :: 		ultimoErro = erroMedidas;
-	MOVF       FLOC__menuVout+4, 0
-	MOVWF      R0+0
-	MOVF       FLOC__menuVout+5, 0
-	MOVWF      R0+1
 	CALL       _int2double+0
 	MOVF       R0+0, 0
 	MOVWF      _ultimoErro+0
@@ -667,7 +659,7 @@ L_menuVout27:
 	MOVWF      _ultimoErro+2
 	MOVF       R0+3, 0
 	MOVWF      _ultimoErro+3
-;circuito_rcrc.c,303 :: 		integral = ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
+;circuito_rcrc.c,303 :: 		integral += ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
 	CLRF       R3+0
 	CLRF       R3+1
 	MOVF       R3+0, 0
@@ -689,26 +681,59 @@ L_menuVout27:
 	MOVF       _ganhoIntegral+3, 0
 	MOVWF      R4+3
 	CALL       _Mul_32x32_FP+0
+	MOVF       _integral+0, 0
+	MOVWF      R4+0
+	MOVF       _integral+1, 0
+	MOVWF      R4+1
+	MOVF       _integral+2, 0
+	MOVWF      R4+2
+	MOVF       _integral+3, 0
+	MOVWF      R4+3
+	CALL       _Add_32x32_FP+0
 	MOVF       R0+0, 0
-	MOVWF      FLOC__menuVout+0
-	MOVF       R0+1, 0
-	MOVWF      FLOC__menuVout+1
-	MOVF       R0+2, 0
-	MOVWF      FLOC__menuVout+2
-	MOVF       R0+3, 0
-	MOVWF      FLOC__menuVout+3
-	MOVF       FLOC__menuVout+0, 0
 	MOVWF      _integral+0
-	MOVF       FLOC__menuVout+1, 0
+	MOVF       R0+1, 0
 	MOVWF      _integral+1
-	MOVF       FLOC__menuVout+2, 0
+	MOVF       R0+2, 0
 	MOVWF      _integral+2
-	MOVF       FLOC__menuVout+3, 0
+	MOVF       R0+3, 0
 	MOVWF      _integral+3
-;circuito_rcrc.c,306 :: 		valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
-	MOVF       FLOC__menuVout+4, 0
+;circuito_rcrc.c,304 :: 		if (integral > 511) {
+	MOVF       R0+0, 0
+	MOVWF      R4+0
+	MOVF       R0+1, 0
+	MOVWF      R4+1
+	MOVF       R0+2, 0
+	MOVWF      R4+2
+	MOVF       R0+3, 0
+	MOVWF      R4+3
+	MOVLW      0
 	MOVWF      R0+0
-	MOVF       FLOC__menuVout+5, 0
+	MOVLW      128
+	MOVWF      R0+1
+	MOVLW      127
+	MOVWF      R0+2
+	MOVLW      135
+	MOVWF      R0+3
+	CALL       _Compare_Double+0
+	MOVLW      1
+	BTFSC      STATUS+0, 0
+	MOVLW      0
+	MOVWF      R0+0
+	MOVF       R0+0, 0
+	BTFSC      STATUS+0, 2
+	GOTO       L_menuVout31
+;circuito_rcrc.c,305 :: 		integral = 0;
+	CLRF       _integral+0
+	CLRF       _integral+1
+	CLRF       _integral+2
+	CLRF       _integral+3
+;circuito_rcrc.c,306 :: 		}
+L_menuVout31:
+;circuito_rcrc.c,308 :: 		valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
+	MOVF       _erroMedidas+0, 0
+	MOVWF      R0+0
+	MOVF       _erroMedidas+1, 0
 	MOVWF      R0+1
 	RRF        R0+1, 1
 	RRF        R0+0, 1
@@ -730,13 +755,13 @@ L_menuVout27:
 	MOVF       _ganhoProporcional+3, 0
 	MOVWF      R4+3
 	CALL       _Mul_32x32_FP+0
-	MOVF       FLOC__menuVout+0, 0
+	MOVF       _integral+0, 0
 	MOVWF      R4+0
-	MOVF       FLOC__menuVout+1, 0
+	MOVF       _integral+1, 0
 	MOVWF      R4+1
-	MOVF       FLOC__menuVout+2, 0
+	MOVF       _integral+2, 0
 	MOVWF      R4+2
-	MOVF       FLOC__menuVout+3, 0
+	MOVF       _integral+3, 0
 	MOVWF      R4+3
 	CALL       _Add_32x32_FP+0
 	MOVF       R0+0, 0
@@ -747,7 +772,7 @@ L_menuVout27:
 	MOVWF      _valorPwm+2
 	MOVF       R0+3, 0
 	MOVWF      _valorPwm+3
-;circuito_rcrc.c,308 :: 		if (valorPwm > 255) valorPwm = 255;
+;circuito_rcrc.c,310 :: 		if (valorPwm > 255) valorPwm = 255;
 	MOVF       R0+0, 0
 	MOVWF      R4+0
 	MOVF       R0+1, 0
@@ -771,7 +796,7 @@ L_menuVout27:
 	MOVWF      R0+0
 	MOVF       R0+0, 0
 	BTFSC      STATUS+0, 2
-	GOTO       L_menuVout31
+	GOTO       L_menuVout32
 	MOVLW      0
 	MOVWF      _valorPwm+0
 	MOVLW      0
@@ -780,8 +805,8 @@ L_menuVout27:
 	MOVWF      _valorPwm+2
 	MOVLW      134
 	MOVWF      _valorPwm+3
-L_menuVout31:
-;circuito_rcrc.c,310 :: 		PWM1_Set_Duty(valorPwm);
+L_menuVout32:
+;circuito_rcrc.c,312 :: 		PWM1_Set_Duty(valorPwm);
 	MOVF       _valorPwm+0, 0
 	MOVWF      R0+0
 	MOVF       _valorPwm+1, 0
@@ -794,7 +819,7 @@ L_menuVout31:
 	MOVF       R0+0, 0
 	MOVWF      FARG_PWM1_Set_Duty_new_duty+0
 	CALL       _PWM1_Set_Duty+0
-;circuito_rcrc.c,311 :: 		ultimoErro = erroMedidas;
+;circuito_rcrc.c,313 :: 		ultimoErro = erroMedidas;
 	MOVF       _erroMedidas+0, 0
 	MOVWF      R0+0
 	MOVF       _erroMedidas+1, 0
@@ -808,33 +833,33 @@ L_menuVout31:
 	MOVWF      _ultimoErro+2
 	MOVF       R0+3, 0
 	MOVWF      _ultimoErro+3
-;circuito_rcrc.c,312 :: 		flagCalculoControlador = 0;
+;circuito_rcrc.c,314 :: 		flagCalculoControlador = 0;
 	BCF        _flagsB+0, 1
-;circuito_rcrc.c,313 :: 		}
+;circuito_rcrc.c,315 :: 		}
 L_menuVout30:
-;circuito_rcrc.c,314 :: 		}  while (!flagSaidaMenu);
+;circuito_rcrc.c,316 :: 		}  while (!flagSaidaMenu);
 	BTFSS      _flagsA+0, 4
 	GOTO       L_menuVout27
-;circuito_rcrc.c,316 :: 		Lcd_Cmd(_LCD_CLEAR);
+;circuito_rcrc.c,318 :: 		Lcd_Cmd(_LCD_CLEAR);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;circuito_rcrc.c,317 :: 		PWM1_Set_Duty(0);
+;circuito_rcrc.c,319 :: 		PWM1_Set_Duty(0);
 	CLRF       FARG_PWM1_Set_Duty_new_duty+0
 	CALL       _PWM1_Set_Duty+0
-;circuito_rcrc.c,318 :: 		tensaoDesejada = 0;
+;circuito_rcrc.c,320 :: 		tensaoDesejada = 0;
 	CLRF       _tensaoDesejada+0
-;circuito_rcrc.c,319 :: 		dentroDoMenuUm = 0;
+;circuito_rcrc.c,321 :: 		dentroDoMenuUm = 0;
 	BCF        _flagsA+0, 6
-;circuito_rcrc.c,320 :: 		}
+;circuito_rcrc.c,322 :: 		}
 L_end_menuVout:
 	RETURN
 ; end of _menuVout
 
 _menuCargaCoulomb:
 
-;circuito_rcrc.c,322 :: 		void menuCargaCoulomb() {
-;circuito_rcrc.c,324 :: 		Lcd_Chr (1,1, ' ');
+;circuito_rcrc.c,324 :: 		void menuCargaCoulomb() {
+;circuito_rcrc.c,326 :: 		Lcd_Chr (1,1, ' ');
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      1
@@ -842,7 +867,7 @@ _menuCargaCoulomb:
 	MOVLW      32
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,325 :: 		Lcd_Chr (1,16, ' ');
+;circuito_rcrc.c,327 :: 		Lcd_Chr (1,16, ' ');
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      16
@@ -850,7 +875,7 @@ _menuCargaCoulomb:
 	MOVLW      32
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,326 :: 		Lcd_Chr(1, 9, ':');
+;circuito_rcrc.c,328 :: 		Lcd_Chr(1, 9, ':');
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      9
@@ -858,24 +883,24 @@ _menuCargaCoulomb:
 	MOVLW      58
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,328 :: 		do {
-L_menuCargaCoulomb32:
-;circuito_rcrc.c,329 :: 		} while(!flagSaidaMenu);
+;circuito_rcrc.c,330 :: 		do {
+L_menuCargaCoulomb33:
+;circuito_rcrc.c,331 :: 		} while(!flagSaidaMenu);
 	BTFSS      _flagsA+0, 4
-	GOTO       L_menuCargaCoulomb32
-;circuito_rcrc.c,331 :: 		Lcd_Cmd(_LCD_CLEAR);
+	GOTO       L_menuCargaCoulomb33
+;circuito_rcrc.c,333 :: 		Lcd_Cmd(_LCD_CLEAR);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;circuito_rcrc.c,332 :: 		}
+;circuito_rcrc.c,334 :: 		}
 L_end_menuCargaCoulomb:
 	RETURN
 ; end of _menuCargaCoulomb
 
 _menuNumeroEletrons:
 
-;circuito_rcrc.c,334 :: 		void menuNumeroEletrons() {
-;circuito_rcrc.c,336 :: 		Lcd_Chr (1,1, ' ');
+;circuito_rcrc.c,336 :: 		void menuNumeroEletrons() {
+;circuito_rcrc.c,338 :: 		Lcd_Chr (1,1, ' ');
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      1
@@ -883,7 +908,7 @@ _menuNumeroEletrons:
 	MOVLW      32
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,337 :: 		Lcd_Chr (1,16, ' ');
+;circuito_rcrc.c,339 :: 		Lcd_Chr (1,16, ' ');
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      16
@@ -891,7 +916,7 @@ _menuNumeroEletrons:
 	MOVLW      32
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,338 :: 		Lcd_Chr(1, 12, ':');
+;circuito_rcrc.c,340 :: 		Lcd_Chr(1, 12, ':');
 	MOVLW      1
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      12
@@ -899,43 +924,43 @@ _menuNumeroEletrons:
 	MOVLW      58
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,340 :: 		do {
-L_menuNumeroEletrons35:
-;circuito_rcrc.c,341 :: 		} while (!flagSaidaMenu);
+;circuito_rcrc.c,342 :: 		do {
+L_menuNumeroEletrons36:
+;circuito_rcrc.c,343 :: 		} while (!flagSaidaMenu);
 	BTFSS      _flagsA+0, 4
-	GOTO       L_menuNumeroEletrons35
-;circuito_rcrc.c,343 :: 		Lcd_Cmd(_LCD_CLEAR);
+	GOTO       L_menuNumeroEletrons36
+;circuito_rcrc.c,345 :: 		Lcd_Cmd(_LCD_CLEAR);
 	MOVLW      1
 	MOVWF      FARG_Lcd_Cmd_out_char+0
 	CALL       _Lcd_Cmd+0
-;circuito_rcrc.c,344 :: 		dentroDoMenuDois = 0;
+;circuito_rcrc.c,346 :: 		dentroDoMenuDois = 0;
 	BCF        _flagsA+0, 7
-;circuito_rcrc.c,345 :: 		}
+;circuito_rcrc.c,347 :: 		}
 L_end_menuNumeroEletrons:
 	RETURN
 ; end of _menuNumeroEletrons
 
 _setSetPoint:
 
-;circuito_rcrc.c,347 :: 		void setSetPoint() {
-;circuito_rcrc.c,348 :: 		if (!botaoIncremento) {
+;circuito_rcrc.c,349 :: 		void setSetPoint() {
+;circuito_rcrc.c,350 :: 		if (!botaoIncremento) {
 	BTFSC      PORTB+0, 0
-	GOTO       L_setSetPoint38
-;circuito_rcrc.c,349 :: 		flagIncremento = 1;
+	GOTO       L_setSetPoint39
+;circuito_rcrc.c,351 :: 		flagIncremento = 1;
 	BSF        _flagsA+0, 1
-;circuito_rcrc.c,350 :: 		}
-L_setSetPoint38:
-;circuito_rcrc.c,352 :: 		if (botaoIncremento && flagIncremento) {
+;circuito_rcrc.c,352 :: 		}
+L_setSetPoint39:
+;circuito_rcrc.c,354 :: 		if (botaoIncremento && flagIncremento) {
 	BTFSS      PORTB+0, 0
-	GOTO       L_setSetPoint41
+	GOTO       L_setSetPoint42
 	BTFSS      _flagsA+0, 1
-	GOTO       L_setSetPoint41
-L__setSetPoint52:
-;circuito_rcrc.c,353 :: 		flagIncremento = 0;
+	GOTO       L_setSetPoint42
+L__setSetPoint53:
+;circuito_rcrc.c,355 :: 		flagIncremento = 0;
 	BCF        _flagsA+0, 1
-;circuito_rcrc.c,354 :: 		tensaoDesejada++;
+;circuito_rcrc.c,356 :: 		tensaoDesejada++;
 	INCF       _tensaoDesejada+0, 1
-;circuito_rcrc.c,355 :: 		if (tensaoDesejada > 25) {
+;circuito_rcrc.c,357 :: 		if (tensaoDesejada > 25) {
 	MOVLW      128
 	XORLW      25
 	MOVWF      R0+0
@@ -943,34 +968,34 @@ L__setSetPoint52:
 	XORWF      _tensaoDesejada+0, 0
 	SUBWF      R0+0, 0
 	BTFSC      STATUS+0, 0
-	GOTO       L_setSetPoint42
-;circuito_rcrc.c,356 :: 		tensaoDesejada = 25;
+	GOTO       L_setSetPoint43
+;circuito_rcrc.c,358 :: 		tensaoDesejada = 25;
 	MOVLW      25
 	MOVWF      _tensaoDesejada+0
-;circuito_rcrc.c,357 :: 		}
-L_setSetPoint42:
-;circuito_rcrc.c,358 :: 		flagCalculoLcd = 1;
-	BSF        _flagsA+0, 5
 ;circuito_rcrc.c,359 :: 		}
-L_setSetPoint41:
-;circuito_rcrc.c,361 :: 		if (!botaoDecremento) {
-	BTFSC      PORTB+0, 3
-	GOTO       L_setSetPoint43
-;circuito_rcrc.c,362 :: 		flagDecremento = 1;
-	BSF        _flagsA+0, 2
-;circuito_rcrc.c,363 :: 		}
 L_setSetPoint43:
-;circuito_rcrc.c,365 :: 		if (botaoDecremento && flagDecremento) {
+;circuito_rcrc.c,360 :: 		flagCalculoLcd = 1;
+	BSF        _flagsA+0, 5
+;circuito_rcrc.c,361 :: 		}
+L_setSetPoint42:
+;circuito_rcrc.c,363 :: 		if (!botaoDecremento) {
+	BTFSC      PORTB+0, 3
+	GOTO       L_setSetPoint44
+;circuito_rcrc.c,364 :: 		flagDecremento = 1;
+	BSF        _flagsA+0, 2
+;circuito_rcrc.c,365 :: 		}
+L_setSetPoint44:
+;circuito_rcrc.c,367 :: 		if (botaoDecremento && flagDecremento) {
 	BTFSS      PORTB+0, 3
-	GOTO       L_setSetPoint46
+	GOTO       L_setSetPoint47
 	BTFSS      _flagsA+0, 2
-	GOTO       L_setSetPoint46
-L__setSetPoint51:
-;circuito_rcrc.c,366 :: 		flagDecremento = 0;
+	GOTO       L_setSetPoint47
+L__setSetPoint52:
+;circuito_rcrc.c,368 :: 		flagDecremento = 0;
 	BCF        _flagsA+0, 2
-;circuito_rcrc.c,367 :: 		tensaoDesejada--;
+;circuito_rcrc.c,369 :: 		tensaoDesejada--;
 	DECF       _tensaoDesejada+0, 1
-;circuito_rcrc.c,368 :: 		if (tensaoDesejada < 0) {
+;circuito_rcrc.c,370 :: 		if (tensaoDesejada < 0) {
 	MOVLW      128
 	XORWF      _tensaoDesejada+0, 0
 	MOVWF      R0+0
@@ -978,35 +1003,35 @@ L__setSetPoint51:
 	XORLW      0
 	SUBWF      R0+0, 0
 	BTFSC      STATUS+0, 0
-	GOTO       L_setSetPoint47
-;circuito_rcrc.c,369 :: 		tensaoDesejada = 0;
-	CLRF       _tensaoDesejada+0
-;circuito_rcrc.c,370 :: 		}
-L_setSetPoint47:
-;circuito_rcrc.c,371 :: 		flagCalculoLcd = 1;
-	BSF        _flagsA+0, 5
-;circuito_rcrc.c,372 :: 		}
-L_setSetPoint46:
-;circuito_rcrc.c,374 :: 		if (flagCalculoLcd) {
-	BTFSS      _flagsA+0, 5
 	GOTO       L_setSetPoint48
-;circuito_rcrc.c,375 :: 		calculoLcd();
-	CALL       _calculoLcd+0
-;circuito_rcrc.c,376 :: 		flagCalculoLcd = 0;
-	BCF        _flagsA+0, 5
-;circuito_rcrc.c,377 :: 		}
+;circuito_rcrc.c,371 :: 		tensaoDesejada = 0;
+	CLRF       _tensaoDesejada+0
+;circuito_rcrc.c,372 :: 		}
 L_setSetPoint48:
-;circuito_rcrc.c,378 :: 		}
+;circuito_rcrc.c,373 :: 		flagCalculoLcd = 1;
+	BSF        _flagsA+0, 5
+;circuito_rcrc.c,374 :: 		}
+L_setSetPoint47:
+;circuito_rcrc.c,376 :: 		if (flagCalculoLcd) {
+	BTFSS      _flagsA+0, 5
+	GOTO       L_setSetPoint49
+;circuito_rcrc.c,377 :: 		calculoLcd();
+	CALL       _calculoLcd+0
+;circuito_rcrc.c,378 :: 		flagCalculoLcd = 0;
+	BCF        _flagsA+0, 5
+;circuito_rcrc.c,379 :: 		}
+L_setSetPoint49:
+;circuito_rcrc.c,380 :: 		}
 L_end_setSetPoint:
 	RETURN
 ; end of _setSetPoint
 
 _calculoLcd:
 
-;circuito_rcrc.c,380 :: 		void calculoLcd() {
-;circuito_rcrc.c,384 :: 		unidadeLcd = 0x00;
+;circuito_rcrc.c,382 :: 		void calculoLcd() {
+;circuito_rcrc.c,386 :: 		unidadeLcd = 0x00;
 	CLRF       calculoLcd_unidadeLcd_L0+0
-;circuito_rcrc.c,387 :: 		dezenaLcd = (((tensaoDesejada / 10) % 10) + '0');
+;circuito_rcrc.c,389 :: 		dezenaLcd = (((tensaoDesejada / 10) % 10) + '0');
 	MOVLW      10
 	MOVWF      R4+0
 	MOVF       _tensaoDesejada+0, 0
@@ -1020,7 +1045,7 @@ _calculoLcd:
 	MOVLW      48
 	ADDWF      R0+0, 0
 	MOVWF      FARG_Lcd_Chr_out_char+0
-;circuito_rcrc.c,388 :: 		unidadeLcd = ((tensaoDesejada % 10) + '0');
+;circuito_rcrc.c,390 :: 		unidadeLcd = ((tensaoDesejada % 10) + '0');
 	MOVLW      10
 	MOVWF      R4+0
 	MOVF       _tensaoDesejada+0, 0
@@ -1031,13 +1056,13 @@ _calculoLcd:
 	MOVLW      48
 	ADDWF      R0+0, 0
 	MOVWF      calculoLcd_unidadeLcd_L0+0
-;circuito_rcrc.c,390 :: 		Lcd_Chr(2, 12, dezenaLcd);
+;circuito_rcrc.c,392 :: 		Lcd_Chr(2, 12, dezenaLcd);
 	MOVLW      2
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      12
 	MOVWF      FARG_Lcd_Chr_column+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,391 :: 		Lcd_Chr(2, 13, '.');
+;circuito_rcrc.c,393 :: 		Lcd_Chr(2, 13, '.');
 	MOVLW      2
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      13
@@ -1045,7 +1070,7 @@ _calculoLcd:
 	MOVLW      46
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,392 :: 		Lcd_Chr(2, 14, unidadeLcd);
+;circuito_rcrc.c,394 :: 		Lcd_Chr(2, 14, unidadeLcd);
 	MOVLW      2
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      14
@@ -1053,7 +1078,7 @@ _calculoLcd:
 	MOVF       calculoLcd_unidadeLcd_L0+0, 0
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
-;circuito_rcrc.c,394 :: 		}
+;circuito_rcrc.c,396 :: 		}
 L_end_calculoLcd:
 	RETURN
 ; end of _calculoLcd
