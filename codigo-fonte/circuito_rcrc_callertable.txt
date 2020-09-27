@@ -75,11 +75,6 @@ main
 			RES032
 			SETFOV32
 			SETFUN32
-		word2double
-			NRM3232
-				RES032
-				SETFUN32
-				FIXSIGN32
 		Sub_32x32_FP
 			Add_32x32_FP
 				NRM4032
@@ -92,8 +87,6 @@ main
 					SETFUN32
 					FIXSIGN32
 				SETFOV32
-		double2int
-			SETIOV3224
 		Add_32x32_FP
 			NRM4032
 				RES032
@@ -105,7 +98,14 @@ main
 				SETFUN32
 				FIXSIGN32
 			SETFOV32
+		Div_32x32_FP
+			SETFDZ32
+			RES032
+			SETFOV32
+			SETFUN32
 		Compare_Double
+		double2int
+			SETIOV3224
 		double2byte
 			SETIOV3224
 		PWM1_Set_Duty

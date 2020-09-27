@@ -51,14 +51,14 @@ sbit LCD_D7_Direction at TRISB5_bit;
 // Variaveis globais:
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
-unsigned int leituraAdc = 0;
-int erroMedidas = 0;
+int leituraAdc = 0;
+double erroMedidas = 0.0;
 unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
 double ganhoProporcional = 60.0,
        ganhoDerivativo = 10.0,
-       ganhoIntegral = 30.0,
+       ganhoIntegral = 60.0,
        valorIdealAdc = 0.0,
        integral = 0.0;
 
@@ -299,17 +299,19 @@ void menuVout() {
       
 
       erroMedidas = (valorIdealAdc - leituraAdc);
+      integral = integral + ganhoIntegral * ((erroMedidas + ultimoErro) / 2) * 0.010;
+
+      if (integral > 255) integral = 255;
+      else if (integral < -255) integral = -255;
+
       ultimoErro = erroMedidas;
-      integral += ganhoIntegral * ((int)((erroMedidas - ultimoErro)* 0.010) >> 1);
-      if (integral > 511) {
-        integral = 0;
-      }
       
       valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
       
-      if (valorPwm > 255) valorPwm = 255;
+      if (valorPwm >= 255) valorPwm = 255;
+      else if (valorPwm < 0) valorPwm = 0;
       //UART1_Write('B');
-      PWM1_Set_Duty(valorPwm);
+      PWM1_Set_Duty((char)valorPwm);
       ultimoErro = erroMedidas;
       flagCalculoControlador = 0;
     }
