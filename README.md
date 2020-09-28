@@ -3,7 +3,7 @@
 ### Lista de Tarefas ###
 
 - [x] Decidir o modelo microcontrolador e a línguagem de progrmação do microcontrolador (PIC 16f876A e C ANSI);
-- [x] Montar o hardware (Circuito RC e Display LCD);
+- [x] Montar o hardware (Microcontrolador, Circuito RC e Display LCD);
 - [x] Rodar as simulações no [**Simulink**](https://pt.wikipedia.org/wiki/Simulink) para ter uma ideia da faixa de ganhos (Kp, Ki e Kd) interessante;
 - [x] Escrever o programa básico para interface com usuário;
 - [x] Escrever algoritmo para a parcela proporcional;
