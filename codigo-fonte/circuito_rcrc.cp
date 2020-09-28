@@ -24,10 +24,11 @@ unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
 double ganhoProporcional = 60.0,
- ganhoDerivativo = 10.0,
+ ganhoDerivativo = 0.050,
  ganhoIntegral = 60.0,
  valorIdealAdc = 0.0,
- integral = 0.0;
+ integral = 0.0,
+ derivada = 0.0;
 
 
 
@@ -164,7 +165,7 @@ void configurarRegistradores() {
  INTCON = 0b11100000;
  TMR0 = 99;
  OPTION_REG = 0b10000111;
-#line 217 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
+#line 218 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 }
 
 void iniciarLcd() {
@@ -236,7 +237,7 @@ void menuVout() {
  Lcd_Chr_Cp('n');
  Lcd_Chr_Cp('t');
  Lcd_Chr_Cp(':');
- Lcd_Chr(2, 15, 'V');
+ Lcd_Chr(2, 15, 'D');
 
 
 
@@ -255,15 +256,16 @@ void menuVout() {
  if (integral > 255) integral = 255;
  else if (integral < -255) integral = -255;
 
+ derivada = ganhoDerivativo * (erroMedidas - ultimoErro)/0.010;
+
  ultimoErro = erroMedidas;
 
- valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
+ valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral + derivada;
 
  if (valorPwm >= 255) valorPwm = 255;
  else if (valorPwm < 0) valorPwm = 0;
 
  PWM1_Set_Duty((char)valorPwm);
- ultimoErro = erroMedidas;
   flagsB.F1  = 0;
  }
  } while (! flagsA.F4 );

@@ -1,13 +1,13 @@
 0	1	mikroCPIC1618.exe -MSF -DBG -pP16F876A -DL -O11111114 -fo16 -N"C:\Users\Clesio\Documents\N7\controle-rc-malha-fechada-ptbr\codigo-fonte\circuito_rcrc.mcppi" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" -SP"C:\Users\Clesio\Documents\N7\controle-rc-malha-fechada-ptbr\codigo-fonte\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" "circuito_rcrc.c" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl" "__Lib_ADC_A_C.mcl" "__Lib_PWM_c21.mcl" "__Lib_UART_c67.mcl" "__Lib_LcdConsts.mcl" "__Lib_Lcd.mcl"	 
 hint: 0	1139	Available RAM: 352 [bytes], Available ROM: 8192 [bytes]	 
 diagnostics: 0	122	Compilation Started	circuito_rcrc.c
-warning: 111	1509	Generated baud rate is 9615 bps (error = 0.16 percent)	circuito_rcrc.c
-diagnostics: 398	123	Compiled Successfully	circuito_rcrc.c
-hint: 386	1164	Variable 'dezenaLcd' has been eliminated by optimizer	circuito_rcrc.c
+warning: 112	1509	Generated baud rate is 9615 bps (error = 0.16 percent)	circuito_rcrc.c
+diagnostics: 400	123	Compiled Successfully	circuito_rcrc.c
+hint: 388	1164	Variable 'dezenaLcd' has been eliminated by optimizer	circuito_rcrc.c
 diagnostics: 0	127	All files Compiled in 78 ms	 
-hint: 0	1144	Used RAM (bytes): 82 (23%)  Free RAM (bytes): 270 (77%)	Used RAM (bytes): 82 (23%)  Free RAM (bytes): 270 (77%)
-hint: 0	1144	Used ROM (program words): 2598 (32%)  Free ROM (program words): 5594 (68%)	Used ROM (program words): 2598 (32%)  Free ROM (program words): 5594 (68%)
+hint: 0	1144	Used RAM (bytes): 93 (26%)  Free RAM (bytes): 259 (74%)	Used RAM (bytes): 93 (26%)  Free RAM (bytes): 259 (74%)
+hint: 0	1144	Used ROM (program words): 2715 (33%)  Free ROM (program words): 5477 (67%)	Used ROM (program words): 2715 (33%)  Free ROM (program words): 5477 (67%)
 diagnostics: 0	125	Project Linked Successfully	circuito_rcrc.mcppi
 diagnostics: 0	128	Linked in 78 ms	 
 diagnostics: 0	129	Project 'circuito_rcrc.mcppi' completed: 172 ms	 
-diagnostics: 0	103	Finished successfully: 27 set 2020, 14:20:24	circuito_rcrc.mcppi
+diagnostics: 0	103	Finished successfully: 28 set 2020, 15:56:25	circuito_rcrc.mcppi

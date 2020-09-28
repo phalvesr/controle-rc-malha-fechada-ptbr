@@ -205,6 +205,7 @@ delay_5ms
 delay_80us
 delay_8ms
 delay_cyc
+derivada
 div_16x16_s
 div_16x16_s_l
 div_16x16_u
