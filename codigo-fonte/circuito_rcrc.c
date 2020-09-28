@@ -10,7 +10,7 @@
   IDE: MikroC Pro for PIC v.7.6.0
   
   Iniciado em 23/09/2020.
-  Data da última atualização: 23/09/2020
+  Data da última atualização: 28/09/2020
 */
 
 // ============================================================================
@@ -57,10 +57,11 @@ unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
 double ganhoProporcional = 60.0,
-       ganhoDerivativo = 10.0,
+       ganhoDerivativo = 0.050,
        ganhoIntegral = 60.0,
        valorIdealAdc = 0.0,
-       integral = 0.0;
+       integral = 0.0,
+       derivada = 0.0;
 
 // ============================================================================
 // Declaração de funções:
@@ -285,7 +286,7 @@ void menuVout() {
   Lcd_Chr_Cp('n');
   Lcd_Chr_Cp('t');
   Lcd_Chr_Cp(':');
-  Lcd_Chr(2, 15, 'V');
+  Lcd_Chr(2, 15, 'D');
   
 
   
@@ -301,18 +302,19 @@ void menuVout() {
       erroMedidas = (valorIdealAdc - leituraAdc);
       integral = integral + ganhoIntegral * ((erroMedidas + ultimoErro) / 2) * 0.010;
 
-      if (integral > 255) integral = 255;
+      if (integral > 255) integral = 255;     // Windup
       else if (integral < -255) integral = -255;
+
+      derivada = ganhoDerivativo * (erroMedidas - ultimoErro)/0.010;
 
       ultimoErro = erroMedidas;
       
-      valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral;
+      valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral + derivada;
       
       if (valorPwm >= 255) valorPwm = 255;
       else if (valorPwm < 0) valorPwm = 0;
       //UART1_Write('B');
       PWM1_Set_Duty((char)valorPwm);
-      ultimoErro = erroMedidas;
       flagCalculoControlador = 0;
     }
   }  while (!flagSaidaMenu);
