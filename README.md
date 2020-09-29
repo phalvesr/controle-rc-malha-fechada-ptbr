@@ -9,6 +9,7 @@
 - [x] Escrever algoritmo para a parcela proporcional;
 - [x] Escrever o algoritmo para a parcela integral (Baseado no algoritmo do [**Brett Beauregard**](http://brettbeauregard.com/blog/) e na [**forma numérica**](https://pt.wikipedia.org/wiki/Integra%C3%A7%C3%A3o_num%C3%A9rica#Ordem_de_aproxima%C3%A7%C3%A3o));
 - [x] Escrever o algoritmo para a parcela derivativa;
+- [ ] Implementar um filtro digital;
 - [ ] Ajustar os ganhos práticos;
 - [ ] **Testar, testar, testar e... Ah! testar mais um pouco!**
 
