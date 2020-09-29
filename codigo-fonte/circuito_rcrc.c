@@ -57,7 +57,7 @@ unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
 double ganhoProporcional = 60.0,
-       ganhoDerivativo = 0.050,
+       ganhoDerivativo = 0.250,
        ganhoIntegral = 60.0,
        valorIdealAdc = 0.0,
        integral = 0.0,
@@ -286,7 +286,7 @@ void menuVout() {
   Lcd_Chr_Cp('n');
   Lcd_Chr_Cp('t');
   Lcd_Chr_Cp(':');
-  Lcd_Chr(2, 15, 'D');
+  Lcd_Chr(2, 15, 'V');
   
 
   
@@ -311,7 +311,7 @@ void menuVout() {
       
       valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral + derivada;
       
-      if (valorPwm >= 255) valorPwm = 255;
+      if (valorPwm > 255) valorPwm = 255;
       else if (valorPwm < 0) valorPwm = 0;
       //UART1_Write('B');
       PWM1_Set_Duty((char)valorPwm);

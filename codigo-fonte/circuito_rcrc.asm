@@ -560,12 +560,12 @@ _menuVout:
 	MOVLW      58
 	MOVWF      FARG_Lcd_Chr_CP_out_char+0
 	CALL       _Lcd_Chr_CP+0
-;circuito_rcrc.c,289 :: 		Lcd_Chr(2, 15, 'D');
+;circuito_rcrc.c,289 :: 		Lcd_Chr(2, 15, 'V');
 	MOVLW      2
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      15
 	MOVWF      FARG_Lcd_Chr_column+0
-	MOVLW      68
+	MOVLW      86
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
 ;circuito_rcrc.c,293 :: 		flagCalculoLcd = 1;
@@ -901,18 +901,26 @@ L_menuVout32:
 	MOVWF      _valorPwm+2
 	MOVF       R0+3, 0
 	MOVWF      _valorPwm+3
-;circuito_rcrc.c,314 :: 		if (valorPwm >= 255) valorPwm = 255;
-	MOVLW      0
+;circuito_rcrc.c,314 :: 		if (valorPwm > 255) valorPwm = 255;
+	MOVF       R0+0, 0
 	MOVWF      R4+0
-	MOVLW      0
+	MOVF       R0+1, 0
 	MOVWF      R4+1
-	MOVLW      127
+	MOVF       R0+2, 0
 	MOVWF      R4+2
-	MOVLW      134
+	MOVF       R0+3, 0
 	MOVWF      R4+3
+	MOVLW      0
+	MOVWF      R0+0
+	MOVLW      0
+	MOVWF      R0+1
+	MOVLW      127
+	MOVWF      R0+2
+	MOVLW      134
+	MOVWF      R0+3
 	CALL       _Compare_Double+0
 	MOVLW      1
-	BTFSS      STATUS+0, 0
+	BTFSC      STATUS+0, 0
 	MOVLW      0
 	MOVWF      R0+0
 	MOVF       R0+0, 0
