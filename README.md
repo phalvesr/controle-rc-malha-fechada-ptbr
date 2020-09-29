@@ -11,6 +11,7 @@
 - [x] Escrever o algoritmo para a parcela derivativa;
 - [ ] Implementar um filtro digital;
 - [ ] Ajustar os ganhos práticos;
+- [ ] Adicionar um sistema de datalog;
 - [ ] **Testar, testar, testar e... Ah! testar mais um pouco!**
 
 ##### **OFF (Relacionado a interface com o computador)** #####
