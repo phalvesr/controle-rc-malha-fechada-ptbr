@@ -12,6 +12,8 @@
 - [ ] Implementar um filtro digital;
 - [ ] Ajustar os ganhos práticos;
 - [ ] Adicionar um sistema de datalog;
+- [ ] Implementar o modo de controle de número de carga;
+- [ ] Implementar o mode de controle de número de elétrons;
 - [ ] **Testar, testar, testar e... Ah! testar mais um pouco!**
 
 ##### **OFF (Relacionado a interface com o computador)** #####
