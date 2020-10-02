@@ -17,6 +17,6 @@
 - [ ] **Testar, testar, testar e... Ah! testar mais um pouco!**
 
 ##### **OFF (Relacionado a interface com o computador)** #####
-- [ ] Conseguir configurar o drivers do módulo conversor TTL para Serial (Windows e Linux);
+- [x] ~~Conseguir configurar o drivers do módulo conversor TTL para Serial (Windows e Linux)~~ Substituido por um Arduino enviando os dados pela serial;
 - [ ] Ler dados da Serial no back-end e enviar por uma rota em formato JSON;
 - [ ] Receber os dados em JSON e manipular uma interface web;
