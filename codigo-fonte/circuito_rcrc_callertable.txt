@@ -64,8 +64,31 @@ main
 						Delay_1us
 						Delay_5500us
 						Delay_50us
-		ADC_Get_Sample
-			Delay_22us
+		filtrarLeitura
+			ADC_Get_Sample
+				Delay_22us
+			int2double
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+			Mul_32x32_FP
+				RES032
+				SETFOV32
+				SETFUN32
+			Add_32x32_FP
+				NRM4032
+					RES032
+					SETFUN32
+					FIXSIGN32
+					SETFOV32
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+				SETFOV32
+			double2int
+				SETIOV3224
 		int2double
 			NRM3232
 				RES032

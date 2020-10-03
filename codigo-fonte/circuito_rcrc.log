@@ -1,13 +1,18 @@
 0	1	mikroCPIC1618.exe -MSF -DBG -pP16F876A -DL -O11111114 -fo16 -N"C:\Users\Clesio\Documents\N7\controle-rc-malha-fechada-ptbr\codigo-fonte\circuito_rcrc.mcppi" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" -SP"C:\Users\Clesio\Documents\N7\controle-rc-malha-fechada-ptbr\codigo-fonte\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\" "circuito_rcrc.c" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl" "__Lib_ADC_A_C.mcl" "__Lib_PWM_c21.mcl" "__Lib_UART_c67.mcl" "__Lib_LcdConsts.mcl" "__Lib_Lcd.mcl"	 
 hint: 0	1139	Available RAM: 352 [bytes], Available ROM: 8192 [bytes]	 
 diagnostics: 0	122	Compilation Started	circuito_rcrc.c
-warning: 112	1509	Generated baud rate is 9615 bps (error = 0.16 percent)	circuito_rcrc.c
-diagnostics: 400	123	Compiled Successfully	circuito_rcrc.c
-hint: 388	1164	Variable 'dezenaLcd' has been eliminated by optimizer	circuito_rcrc.c
+warning: 114	1509	Generated baud rate is 9615 bps (error = 0.16 percent)	circuito_rcrc.c
+hint: 417	1163	Variable '_milharLeitura' has been declared, but not used	circuito_rcrc.c
+diagnostics: 429	123	Compiled Successfully	circuito_rcrc.c
+hint: 391	1164	Variable 'dezenaLcd' has been eliminated by optimizer	circuito_rcrc.c
+hint: 407	1164	Variable 'novaLeitura' has been eliminated by optimizer	circuito_rcrc.c
+hint: 409	1164	Variable 'retorno' has been eliminated by optimizer	circuito_rcrc.c
+hint: 416	1164	Variable '_unidadeLeitura' has been eliminated by optimizer	circuito_rcrc.c
+hint: 417	1164	Variable '_centenaLeitura' has been eliminated by optimizer	circuito_rcrc.c
 diagnostics: 0	127	All files Compiled in 78 ms	 
-hint: 0	1144	Used RAM (bytes): 93 (26%)  Free RAM (bytes): 259 (74%)	Used RAM (bytes): 93 (26%)  Free RAM (bytes): 259 (74%)
-hint: 0	1144	Used ROM (program words): 2723 (33%)  Free ROM (program words): 5469 (67%)	Used ROM (program words): 2723 (33%)  Free ROM (program words): 5469 (67%)
+hint: 0	1144	Used RAM (bytes): 95 (27%)  Free RAM (bytes): 257 (73%)	Used RAM (bytes): 95 (27%)  Free RAM (bytes): 257 (73%)
+hint: 0	1144	Used ROM (program words): 2788 (34%)  Free ROM (program words): 5404 (66%)	Used ROM (program words): 2788 (34%)  Free ROM (program words): 5404 (66%)
 diagnostics: 0	125	Project Linked Successfully	circuito_rcrc.mcppi
-diagnostics: 0	128	Linked in 78 ms	 
+diagnostics: 0	128	Linked in 63 ms	 
 diagnostics: 0	129	Project 'circuito_rcrc.mcppi' completed: 172 ms	 
-diagnostics: 0	103	Finished successfully: 28 set 2020, 23:45:02	circuito_rcrc.mcppi
+diagnostics: 0	103	Finished successfully: 03 out 2020, 16:37:52	circuito_rcrc.mcppi

@@ -231,11 +231,13 @@ eeif
 eeif_bit
 eepgd
 eepgd_bit
+enviardadosserial
 equals_double
 erromedidas
 f
 ferr
 ferr_bit
+filtrarleitura
 fixsign32
 flagsa
 flagsb

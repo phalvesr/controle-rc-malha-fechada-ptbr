@@ -20,15 +20,15 @@ char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
 int leituraAdc = 0;
 double erroMedidas = 0.0;
-unsigned char auxiliarContagemTimerZero = 1, ciclosControlador = 0;
+unsigned char auxiliarContagemTimerZero = 0, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
-double ganhoProporcional = 60.0,
- ganhoDerivativo = 0.250,
+double ganhoProporcional = 90.0,
+ ganhoDerivativo = 1.50,
  ganhoIntegral = 60.0,
  valorIdealAdc = 0.0,
  integral = 0.0,
- derivada = 0.0;
+ derivada = 0.250;
 
 
 
@@ -42,6 +42,8 @@ void menuCargaCoulomb();
 void menuNumeroEletrons();
 void calculoLcd();
 void setSetPoint();
+void enviarDadosSerial(int *leituraAdcPtr);
+int filtrarLeitura();
 
 
 
@@ -165,7 +167,7 @@ void configurarRegistradores() {
  INTCON = 0b11100000;
  TMR0 = 99;
  OPTION_REG = 0b10000111;
-#line 218 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
+#line 220 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 }
 
 void iniciarLcd() {
@@ -246,8 +248,9 @@ void menuVout() {
  setSetPoint();
 
  if ( flagsB.F1 ) {
- leituraAdc = ADC_Get_Sample(0);
- valorIdealAdc = (int) tensaoDesejada * 20.4;
+
+ leituraAdc = filtrarLeitura();
+ valorIdealAdc = (int)tensaoDesejada * 20.4;
 
 
  erroMedidas = (valorIdealAdc - leituraAdc);
@@ -256,7 +259,7 @@ void menuVout() {
  if (integral > 255) integral = 255;
  else if (integral < -255) integral = -255;
 
- derivada = ganhoDerivativo * (erroMedidas - ultimoErro)/0.010;
+ derivada = ganhoDerivativo * (erroMedidas - ultimoErro) / 0.010;
 
  ultimoErro = erroMedidas;
 
@@ -264,8 +267,8 @@ void menuVout() {
 
  if (valorPwm > 255) valorPwm = 255;
  else if (valorPwm < 0) valorPwm = 0;
-
  PWM1_Set_Duty((char)valorPwm);
+
   flagsB.F1  = 0;
  }
  } while (! flagsA.F4 );
@@ -280,7 +283,7 @@ void menuCargaCoulomb() {
 
  Lcd_Chr (1,1, ' ');
  Lcd_Chr (1,16, ' ');
- Lcd_Chr(1, 9, ':');
+ Lcd_Chr(1, 9, 'F');
 
  do {
  } while(! flagsA.F4 );
@@ -348,4 +351,30 @@ void calculoLcd() {
  Lcd_Chr(2, 13, '.');
  Lcd_Chr(2, 14, unidadeLcd);
 
+}
+
+int filtrarLeitura() {
+ static int leituraPassada = 0;
+ static int novaLeitura = ADC_Get_Sample(0);
+
+ int retorno = (int)(leituraPassada + ((double)(novaLeitura - leituraPassada) * 0.4));
+ leituraPassada = novaLeitura;
+ return retorno;
+}
+
+
+void enviarDadosSerial(int *leituraAdcPtr) {
+ static char _unidadeLeitura,_dezenaLeitura,
+ _centenaLeitura, _milharLeitura;
+
+
+ _centenaLeitura = (((*leituraAdcPtr / 100) % 10) + '0');
+ _dezenaLeitura = (((*leituraAdcPtr / 10) % 10) + '0');
+ _unidadeLeitura = ((*leituraAdcPtr % 10) + '0');
+
+
+ UART1_Write(_centenaLeitura);
+ UART1_Write(_dezenaLeitura);
+ UART1_Write(_dezenaLeitura);
+ UART1_Write(';');
 }
