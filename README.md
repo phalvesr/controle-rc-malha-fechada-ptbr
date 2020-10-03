@@ -9,10 +9,14 @@
 - [x] Escrever algoritmo para a parcela proporcional;
 - [x] Escrever o algoritmo para a parcela integral (Baseado no algoritmo do [**Brett Beauregard**](http://brettbeauregard.com/blog/) e na [**forma numérica**](https://pt.wikipedia.org/wiki/Integra%C3%A7%C3%A3o_num%C3%A9rica#Ordem_de_aproxima%C3%A7%C3%A3o));
 - [x] Escrever o algoritmo para a parcela derivativa;
+- [x] Implementar um filtro digital (baseado [**neste artigo**](https://zipcpu.com/dsp/2017/08/19/simple-filter.html));
 - [ ] Ajustar os ganhos práticos;
+- [ ] Adicionar um sistema de datalog;
+- [ ] Implementar o modo de controle de número de carga;
+- [ ] Implementar o mode de controle de número de elétrons;
 - [ ] **Testar, testar, testar e... Ah! testar mais um pouco!**
 
 ##### **OFF (Relacionado a interface com o computador)** #####
-- [ ] Conseguir configurar o drivers do módulo conversor TTL para Serial (Windows e Linux);
+- [x] ~~Conseguir configurar o drivers do módulo conversor TTL para Serial (Windows e Linux)~~ Substituido por um Arduino enviando os dados pela serial;
 - [ ] Ler dados da Serial no back-end e enviar por uma rota em formato JSON;
 - [ ] Receber os dados em JSON e manipular uma interface web;
