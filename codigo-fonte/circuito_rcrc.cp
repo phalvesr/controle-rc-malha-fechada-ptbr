@@ -23,8 +23,8 @@ double erroMedidas = 0.0;
 unsigned char auxiliarContagemTimerZero = 0, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
-double ganhoProporcional = 90.0,
- ganhoDerivativo = 1.50,
+double ganhoProporcional = 60.0,
+ ganhoDerivativo = 0.250,
  ganhoIntegral = 60.0,
  valorIdealAdc = 0.0,
  integral = 0.0,
@@ -239,7 +239,7 @@ void menuVout() {
  Lcd_Chr_Cp('n');
  Lcd_Chr_Cp('t');
  Lcd_Chr_Cp(':');
- Lcd_Chr(2, 15, 'V');
+ Lcd_Chr(2, 15, 'M');
 
 
 
@@ -354,12 +354,21 @@ void calculoLcd() {
 }
 
 int filtrarLeitura() {
- static int leituraPassada = 0;
- static int novaLeitura = ADC_Get_Sample(0);
+ int somatorio = 0, i;
+ static int leituras[] = {0, 0, 0, 0, 0, 0, 0, 0};
+ static char index = 0;
 
- int retorno = (int)(leituraPassada + ((double)(novaLeitura - leituraPassada) * 0.4));
- leituraPassada = novaLeitura;
- return retorno;
+ index++;
+ if (index > 7) index = 0;
+
+ leituras[index] = ADC_Get_Sample(0);
+
+ for (i = 0; i < 8; i++) {
+ somatorio += leituras[i];
+ }
+
+ return (somatorio >> 3);
+
 }
 
 

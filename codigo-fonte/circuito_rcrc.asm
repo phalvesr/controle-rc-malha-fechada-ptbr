@@ -41,7 +41,7 @@ L_interrupt2:
 L_interrupt0:
 ;circuito_rcrc.c,105 :: 		}
 L_end_interrupt:
-L__interrupt59:
+L__interrupt63:
 	MOVF       ___savePCLATH+0, 0
 	MOVWF      PCLATH+0
 	SWAPF      ___saveSTATUS+0, 0
@@ -400,7 +400,7 @@ L_testarBotoes14:
 	GOTO       L_testarBotoes17
 	BTFSS      PORTB+0, 0
 	GOTO       L_testarBotoes17
-L__testarBotoes55:
+L__testarBotoes59:
 ;circuito_rcrc.c,243 :: 		flagIncremento = 0;
 	BCF        _flagsA+0, 1
 ;circuito_rcrc.c,244 :: 		selecaoModo++;
@@ -423,7 +423,7 @@ L_testarBotoes18:
 	GOTO       L_testarBotoes21
 	BTFSS      PORTB+0, 3
 	GOTO       L_testarBotoes21
-L__testarBotoes54:
+L__testarBotoes58:
 ;circuito_rcrc.c,253 :: 		flagDecremento = 0;
 	BCF        _flagsA+0, 2
 ;circuito_rcrc.c,254 :: 		selecaoModo--;
@@ -560,12 +560,12 @@ _menuVout:
 	MOVLW      58
 	MOVWF      FARG_Lcd_Chr_CP_out_char+0
 	CALL       _Lcd_Chr_CP+0
-;circuito_rcrc.c,291 :: 		Lcd_Chr(2, 15, 'V');
+;circuito_rcrc.c,291 :: 		Lcd_Chr(2, 15, 'M');
 	MOVLW      2
 	MOVWF      FARG_Lcd_Chr_row+0
 	MOVLW      15
 	MOVWF      FARG_Lcd_Chr_column+0
-	MOVLW      86
+	MOVLW      77
 	MOVWF      FARG_Lcd_Chr_out_char+0
 	CALL       _Lcd_Chr+0
 ;circuito_rcrc.c,295 :: 		flagCalculoLcd = 1;
@@ -1097,7 +1097,7 @@ L_setSetPoint43:
 	GOTO       L_setSetPoint46
 	BTFSS      _flagsA+0, 1
 	GOTO       L_setSetPoint46
-L__setSetPoint57:
+L__setSetPoint61:
 ;circuito_rcrc.c,362 :: 		flagIncremento = 0;
 	BCF        _flagsA+0, 1
 ;circuito_rcrc.c,363 :: 		tensaoDesejada++;
@@ -1132,7 +1132,7 @@ L_setSetPoint48:
 	GOTO       L_setSetPoint51
 	BTFSS      _flagsA+0, 2
 	GOTO       L_setSetPoint51
-L__setSetPoint56:
+L__setSetPoint60:
 ;circuito_rcrc.c,375 :: 		flagDecremento = 0;
 	BCF        _flagsA+0, 2
 ;circuito_rcrc.c,376 :: 		tensaoDesejada--;
@@ -1228,70 +1228,104 @@ L_end_calculoLcd:
 _filtrarLeitura:
 
 ;circuito_rcrc.c,405 :: 		int filtrarLeitura() {
-;circuito_rcrc.c,407 :: 		static int novaLeitura = ADC_Get_Sample(0);
+;circuito_rcrc.c,406 :: 		int somatorio = 0, i;
+	CLRF       filtrarLeitura_somatorio_L0+0
+	CLRF       filtrarLeitura_somatorio_L0+1
+;circuito_rcrc.c,410 :: 		index++;
+	INCF       filtrarLeitura_index_L0+0, 1
+;circuito_rcrc.c,411 :: 		if (index > 7) index = 0;
+	MOVF       filtrarLeitura_index_L0+0, 0
+	SUBLW      7
+	BTFSC      STATUS+0, 0
+	GOTO       L_filtrarLeitura54
+	CLRF       filtrarLeitura_index_L0+0
+L_filtrarLeitura54:
+;circuito_rcrc.c,413 :: 		leituras[index] = ADC_Get_Sample(0);
+	MOVF       filtrarLeitura_index_L0+0, 0
+	MOVWF      R0+0
+	RLF        R0+0, 1
+	BCF        R0+0, 0
+	MOVF       R0+0, 0
+	ADDLW      filtrarLeitura_leituras_L0+0
+	MOVWF      FLOC__filtrarLeitura+0
 	CLRF       FARG_ADC_Get_Sample_channel+0
 	CALL       _ADC_Get_Sample+0
-	MOVF       R0+0, 0
-	MOVWF      FLOC__filtrarLeitura+4
-	MOVF       R0+1, 0
-	MOVWF      FLOC__filtrarLeitura+5
-	MOVF       filtrarLeitura_leituraPassada_L0+0, 0
-	SUBWF      FLOC__filtrarLeitura+4, 0
-	MOVWF      R0+0
-	MOVF       filtrarLeitura_leituraPassada_L0+1, 0
-	BTFSS      STATUS+0, 0
-	ADDLW      1
-	SUBWF      FLOC__filtrarLeitura+5, 0
-	MOVWF      R0+1
-;circuito_rcrc.c,409 :: 		int retorno = (int)(leituraPassada + ((double)(novaLeitura - leituraPassada) * 0.4));
-	CALL       _int2double+0
-	MOVLW      205
-	MOVWF      R4+0
-	MOVLW      204
-	MOVWF      R4+1
-	MOVLW      76
-	MOVWF      R4+2
-	MOVLW      125
-	MOVWF      R4+3
-	CALL       _Mul_32x32_FP+0
-	MOVF       R0+0, 0
-	MOVWF      FLOC__filtrarLeitura+0
-	MOVF       R0+1, 0
-	MOVWF      FLOC__filtrarLeitura+1
-	MOVF       R0+2, 0
-	MOVWF      FLOC__filtrarLeitura+2
-	MOVF       R0+3, 0
-	MOVWF      FLOC__filtrarLeitura+3
-	MOVF       filtrarLeitura_leituraPassada_L0+0, 0
-	MOVWF      R0+0
-	MOVF       filtrarLeitura_leituraPassada_L0+1, 0
-	MOVWF      R0+1
-	CALL       _int2double+0
 	MOVF       FLOC__filtrarLeitura+0, 0
-	MOVWF      R4+0
-	MOVF       FLOC__filtrarLeitura+1, 0
-	MOVWF      R4+1
-	MOVF       FLOC__filtrarLeitura+2, 0
-	MOVWF      R4+2
-	MOVF       FLOC__filtrarLeitura+3, 0
-	MOVWF      R4+3
-	CALL       _Add_32x32_FP+0
-	CALL       _double2int+0
-;circuito_rcrc.c,410 :: 		leituraPassada = novaLeitura;
-	MOVF       FLOC__filtrarLeitura+4, 0
-	MOVWF      filtrarLeitura_leituraPassada_L0+0
-	MOVF       FLOC__filtrarLeitura+5, 0
-	MOVWF      filtrarLeitura_leituraPassada_L0+1
-;circuito_rcrc.c,411 :: 		return retorno;
-;circuito_rcrc.c,412 :: 		}
+	MOVWF      FSR
+	MOVF       R0+0, 0
+	MOVWF      INDF+0
+	MOVF       R0+1, 0
+	INCF       FSR, 1
+	MOVWF      INDF+0
+;circuito_rcrc.c,415 :: 		for (i = 0; i < 8; i++) {
+	CLRF       filtrarLeitura_i_L0+0
+	CLRF       filtrarLeitura_i_L0+1
+L_filtrarLeitura55:
+	MOVLW      128
+	XORWF      filtrarLeitura_i_L0+1, 0
+	MOVWF      R0+0
+	MOVLW      128
+	SUBWF      R0+0, 0
+	BTFSS      STATUS+0, 2
+	GOTO       L__filtrarLeitura76
+	MOVLW      8
+	SUBWF      filtrarLeitura_i_L0+0, 0
+L__filtrarLeitura76:
+	BTFSC      STATUS+0, 0
+	GOTO       L_filtrarLeitura56
+;circuito_rcrc.c,416 :: 		somatorio += leituras[i];
+	MOVF       filtrarLeitura_i_L0+0, 0
+	MOVWF      R0+0
+	MOVF       filtrarLeitura_i_L0+1, 0
+	MOVWF      R0+1
+	RLF        R0+0, 1
+	RLF        R0+1, 1
+	BCF        R0+0, 0
+	MOVF       R0+0, 0
+	ADDLW      filtrarLeitura_leituras_L0+0
+	MOVWF      FSR
+	MOVF       INDF+0, 0
+	ADDWF      filtrarLeitura_somatorio_L0+0, 1
+	INCF       FSR, 1
+	MOVF       INDF+0, 0
+	BTFSC      STATUS+0, 0
+	ADDLW      1
+	ADDWF      filtrarLeitura_somatorio_L0+1, 1
+;circuito_rcrc.c,415 :: 		for (i = 0; i < 8; i++) {
+	INCF       filtrarLeitura_i_L0+0, 1
+	BTFSC      STATUS+0, 2
+	INCF       filtrarLeitura_i_L0+1, 1
+;circuito_rcrc.c,417 :: 		}
+	GOTO       L_filtrarLeitura55
+L_filtrarLeitura56:
+;circuito_rcrc.c,419 :: 		return (somatorio >> 3);
+	MOVLW      3
+	MOVWF      R2+0
+	MOVF       filtrarLeitura_somatorio_L0+0, 0
+	MOVWF      R0+0
+	MOVF       filtrarLeitura_somatorio_L0+1, 0
+	MOVWF      R0+1
+	MOVF       R2+0, 0
+L__filtrarLeitura77:
+	BTFSC      STATUS+0, 2
+	GOTO       L__filtrarLeitura78
+	RRF        R0+1, 1
+	RRF        R0+0, 1
+	BCF        R0+1, 7
+	BTFSC      R0+1, 6
+	BSF        R0+1, 7
+	ADDLW      255
+	GOTO       L__filtrarLeitura77
+L__filtrarLeitura78:
+;circuito_rcrc.c,421 :: 		}
 L_end_filtrarLeitura:
 	RETURN
 ; end of _filtrarLeitura
 
 _enviarDadosSerial:
 
-;circuito_rcrc.c,415 :: 		void enviarDadosSerial(int *leituraAdcPtr) {
-;circuito_rcrc.c,420 :: 		_centenaLeitura = (((*leituraAdcPtr / 100) % 10) + '0');
+;circuito_rcrc.c,424 :: 		void enviarDadosSerial(int *leituraAdcPtr) {
+;circuito_rcrc.c,429 :: 		_centenaLeitura = (((*leituraAdcPtr / 100) % 10) + '0');
 	MOVF       FARG_enviarDadosSerial_leituraAdcPtr+0, 0
 	MOVWF      FSR
 	MOVF       INDF+0, 0
@@ -1316,7 +1350,7 @@ _enviarDadosSerial:
 	MOVLW      48
 	ADDWF      R0+0, 0
 	MOVWF      FARG_UART1_Write_data_+0
-;circuito_rcrc.c,421 :: 		_dezenaLeitura = (((*leituraAdcPtr / 10) % 10) + '0');
+;circuito_rcrc.c,430 :: 		_dezenaLeitura = (((*leituraAdcPtr / 10) % 10) + '0');
 	MOVF       FARG_enviarDadosSerial_leituraAdcPtr+0, 0
 	MOVWF      FSR
 	MOVF       INDF+0, 0
@@ -1341,21 +1375,21 @@ _enviarDadosSerial:
 	MOVLW      48
 	ADDWF      R0+0, 0
 	MOVWF      enviarDadosSerial__dezenaLeitura_L0+0
-;circuito_rcrc.c,425 :: 		UART1_Write(_centenaLeitura);
+;circuito_rcrc.c,434 :: 		UART1_Write(_centenaLeitura);
 	CALL       _UART1_Write+0
-;circuito_rcrc.c,426 :: 		UART1_Write(_dezenaLeitura);
+;circuito_rcrc.c,435 :: 		UART1_Write(_dezenaLeitura);
 	MOVF       enviarDadosSerial__dezenaLeitura_L0+0, 0
 	MOVWF      FARG_UART1_Write_data_+0
 	CALL       _UART1_Write+0
-;circuito_rcrc.c,427 :: 		UART1_Write(_dezenaLeitura);
+;circuito_rcrc.c,436 :: 		UART1_Write(_dezenaLeitura);
 	MOVF       enviarDadosSerial__dezenaLeitura_L0+0, 0
 	MOVWF      FARG_UART1_Write_data_+0
 	CALL       _UART1_Write+0
-;circuito_rcrc.c,428 :: 		UART1_Write(';');
+;circuito_rcrc.c,437 :: 		UART1_Write(';');
 	MOVLW      59
 	MOVWF      FARG_UART1_Write_data_+0
 	CALL       _UART1_Write+0
-;circuito_rcrc.c,429 :: 		}
+;circuito_rcrc.c,438 :: 		}
 L_end_enviarDadosSerial:
 	RETURN
 ; end of _enviarDadosSerial
