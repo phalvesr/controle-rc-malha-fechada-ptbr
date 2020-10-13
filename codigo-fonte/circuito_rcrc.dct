@@ -94,7 +94,9 @@ c2inv
 c2inv_bit
 c2out
 c2out_bit
+calcularpid
 calculolcd
+cargadesejada
 ccp1con
 ccp1ie
 ccp1ie_bit
@@ -231,7 +233,6 @@ eeif
 eeif_bit
 eepgd
 eepgd_bit
-enviardadosserial
 equals_double
 erromedidas
 f
@@ -336,6 +337,7 @@ not_write
 not_write_bit
 nrm3232
 nrm4032
+numeroeletrons
 oerr
 oerr_bit
 option_reg
@@ -486,10 +488,12 @@ sdiv3232l
 selecaomodo
 sen
 sen_bit
+setcarga
 setfdz32
 setfov32
 setfun32
 setiov3224
+setnumeroeletrons
 setsetpoint
 smp
 smp_bit

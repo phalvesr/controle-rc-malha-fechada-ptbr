@@ -64,19 +64,38 @@ main
 						Delay_1us
 						Delay_5500us
 						Delay_50us
-		filtrarLeitura
-			ADC_Get_Sample
-				Delay_22us
-		int2double
-			NRM3232
+				Div_16x16_S
+					Div_16x16_S_L
+				Lcd_Chr_CP
+					Lcd_Cmd
+						Delay_1us
+						Delay_5500us
+						Delay_50us
+		calcularPid
+			filtrarLeitura
+				ADC_Get_Sample
+					Delay_22us
+			int2double
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+			Mul_32x32_FP
 				RES032
+				SETFOV32
 				SETFUN32
-				FIXSIGN32
-		Mul_32x32_FP
-			RES032
-			SETFOV32
-			SETFUN32
-		Sub_32x32_FP
+			Sub_32x32_FP
+				Add_32x32_FP
+					NRM4032
+						RES032
+						SETFUN32
+						FIXSIGN32
+						SETFOV32
+					NRM3232
+						RES032
+						SETFUN32
+						FIXSIGN32
+					SETFOV32
 			Add_32x32_FP
 				NRM4032
 					RES032
@@ -88,52 +107,180 @@ main
 					SETFUN32
 					FIXSIGN32
 				SETFOV32
-		Add_32x32_FP
-			NRM4032
+			Div_32x32_FP
+				SETFDZ32
 				RES032
-				SETFUN32
-				FIXSIGN32
 				SETFOV32
-			NRM3232
-				RES032
 				SETFUN32
-				FIXSIGN32
-			SETFOV32
-		Div_32x32_FP
-			SETFDZ32
-			RES032
-			SETFOV32
-			SETFUN32
-		Compare_Double
-		double2int
-			SETIOV3224
-		double2byte
-			SETIOV3224
-		PWM1_Set_Duty
-			Mul_16X16_U
+			Compare_Double
+			double2int
+				SETIOV3224
+			double2byte
+				SETIOV3224
+			PWM1_Set_Duty
+				Mul_16X16_U
 		Lcd_Cmd
 			Delay_1us
 			Delay_5500us
 			Delay_50us
+		PWM1_Set_Duty
+			Mul_16X16_U
 	menuCargaCoulomb
 		Lcd_Chr
 			Lcd_Cmd
 				Delay_1us
 				Delay_5500us
 				Delay_50us
+		Lcd_Chr_CP
+			Lcd_Cmd
+				Delay_1us
+				Delay_5500us
+				Delay_50us
+		setCarga
+			Div_16x16_S
+				Div_16x16_S_L
+			calculoLcd
+				Div_8X8_S
+				Lcd_Chr
+					Lcd_Cmd
+						Delay_1us
+						Delay_5500us
+						Delay_50us
+				Div_16x16_S
+					Div_16x16_S_L
+				Lcd_Chr_CP
+					Lcd_Cmd
+						Delay_1us
+						Delay_5500us
+						Delay_50us
+		calcularPid
+			filtrarLeitura
+				ADC_Get_Sample
+					Delay_22us
+			int2double
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+			Mul_32x32_FP
+				RES032
+				SETFOV32
+				SETFUN32
+			Sub_32x32_FP
+				Add_32x32_FP
+					NRM4032
+						RES032
+						SETFUN32
+						FIXSIGN32
+						SETFOV32
+					NRM3232
+						RES032
+						SETFUN32
+						FIXSIGN32
+					SETFOV32
+			Add_32x32_FP
+				NRM4032
+					RES032
+					SETFUN32
+					FIXSIGN32
+					SETFOV32
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+				SETFOV32
+			Div_32x32_FP
+				SETFDZ32
+				RES032
+				SETFOV32
+				SETFUN32
+			Compare_Double
+			double2int
+				SETIOV3224
+			double2byte
+				SETIOV3224
+			PWM1_Set_Duty
+				Mul_16X16_U
 		Lcd_Cmd
 			Delay_1us
 			Delay_5500us
 			Delay_50us
+		PWM1_Set_Duty
+			Mul_16X16_U
 	menuNumeroEletrons
 		Lcd_Chr
 			Lcd_Cmd
 				Delay_1us
 				Delay_5500us
 				Delay_50us
+		setNumeroEletrons
+			calculoLcd
+				Div_8X8_S
+				Lcd_Chr
+					Lcd_Cmd
+						Delay_1us
+						Delay_5500us
+						Delay_50us
+				Div_16x16_S
+					Div_16x16_S_L
+				Lcd_Chr_CP
+					Lcd_Cmd
+						Delay_1us
+						Delay_5500us
+						Delay_50us
+		calcularPid
+			filtrarLeitura
+				ADC_Get_Sample
+					Delay_22us
+			int2double
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+			Mul_32x32_FP
+				RES032
+				SETFOV32
+				SETFUN32
+			Sub_32x32_FP
+				Add_32x32_FP
+					NRM4032
+						RES032
+						SETFUN32
+						FIXSIGN32
+						SETFOV32
+					NRM3232
+						RES032
+						SETFUN32
+						FIXSIGN32
+					SETFOV32
+			Add_32x32_FP
+				NRM4032
+					RES032
+					SETFUN32
+					FIXSIGN32
+					SETFOV32
+				NRM3232
+					RES032
+					SETFUN32
+					FIXSIGN32
+				SETFOV32
+			Div_32x32_FP
+				SETFDZ32
+				RES032
+				SETFOV32
+				SETFUN32
+			Compare_Double
+			double2int
+				SETIOV3224
+			double2byte
+				SETIOV3224
+			PWM1_Set_Duty
+				Mul_16X16_U
 		Lcd_Cmd
 			Delay_1us
 			Delay_5500us
 			Delay_50us
+		PWM1_Set_Duty
+			Mul_16X16_U
 interrupt
 	acoesACadaCemMs

@@ -18,17 +18,18 @@ sbit LCD_D7_Direction at TRISB5_bit;
 
 char flagsA = 0x00, flagsB = 0x00;
 signed char selecaoModo = 0, tensaoDesejada = 0;
-int leituraAdc = 0;
+int leituraAdc = 0, cargaDesejada = 0;
+double numeroEletrons = 0;
 double erroMedidas = 0.0;
 unsigned char auxiliarContagemTimerZero = 0, ciclosControlador = 0;
 double valorPwm = 0.0;
 double ultimoErro = 0.0;
-double ganhoProporcional = 60.0,
- ganhoDerivativo = 0.250,
- ganhoIntegral = 60.0,
+double ganhoProporcional = 3.75918846489949,
+ ganhoDerivativo = 0.138568283962685,
+ ganhoIntegral = 9.57720983847429,
  valorIdealAdc = 0.0,
  integral = 0.0,
- derivada = 0.250;
+ derivada = 0.0;
 
 
 
@@ -40,10 +41,13 @@ void acoesACadaCemMs();
 void menuVout();
 void menuCargaCoulomb();
 void menuNumeroEletrons();
-void calculoLcd();
+void calculoLcd(char modo);
 void setSetPoint();
 void enviarDadosSerial(int *leituraAdcPtr);
 int filtrarLeitura();
+void setCarga();
+void calcularPid();
+void setNumeroEletrons();
 
 
 
@@ -52,7 +56,7 @@ void interrupt() {
 
  if (TMR0IF_bit) {
  auxiliarContagemTimerZero++;
- if ( flagsA.F6 ) {
+ if ( flagsA.F6  ||  flagsA.F7  ||  flagsB.F0 ) {
   flagsB.F1  = 1;
  }
 
@@ -105,7 +109,7 @@ void main() {
  case 1:
  Lcd_Chr (1,1, '<');
  Lcd_Chr (1,16, '>');
- Lcd_Chr (1,4, 'C');
+ Lcd_Chr (1, 6, 'C');
  Lcd_Chr_Cp ('a');
  Lcd_Chr_Cp ('r');
  Lcd_Chr_Cp ('g');
@@ -120,9 +124,9 @@ void main() {
 
  break;
  case 2:
- Lcd_Chr (1,1, '<');
- Lcd_Chr (1,16, '>');
- Lcd_Chr (1,4, 'E');
+ Lcd_Chr (1, 1, '<');
+ Lcd_Chr (1, 16, '>');
+ Lcd_Chr (1, 4, 'E');
  Lcd_Chr_Cp ('l');
  Lcd_Chr_Cp ('e');
  Lcd_Chr_Cp ('t');
@@ -167,7 +171,7 @@ void configurarRegistradores() {
  INTCON = 0b11100000;
  TMR0 = 99;
  OPTION_REG = 0b10000111;
-#line 220 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
+#line 224 "C:/Users/Clesio/Documents/N7/controle-rc-malha-fechada-ptbr/codigo-fonte/circuito_rcrc.c"
 }
 
 void iniciarLcd() {
@@ -226,7 +230,6 @@ void acoesACadaCemMs() {
 }
 
 void menuVout() {
-
  Lcd_Chr (1,1, ' ');
  Lcd_Chr (1,16, ' ');
  Lcd_Chr(1, 10, ':');
@@ -239,36 +242,14 @@ void menuVout() {
  Lcd_Chr_Cp('n');
  Lcd_Chr_Cp('t');
  Lcd_Chr_Cp(':');
- Lcd_Chr(2, 15, 'M');
-
-
+ Lcd_Chr(2, 15, 'V');
 
   flagsA.F5  = 1;
  do {
  setSetPoint();
 
  if ( flagsB.F1 ) {
-
- leituraAdc = filtrarLeitura();
- valorIdealAdc = (int)tensaoDesejada * 20.4;
-
-
- erroMedidas = (valorIdealAdc - leituraAdc);
- integral = integral + ganhoIntegral * ((erroMedidas + ultimoErro) / 2) * 0.010;
-
- if (integral > 255) integral = 255;
- else if (integral < -255) integral = -255;
-
- derivada = ganhoDerivativo * (erroMedidas - ultimoErro) / 0.010;
-
- ultimoErro = erroMedidas;
-
- valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral + derivada;
-
- if (valorPwm > 255) valorPwm = 255;
- else if (valorPwm < 0) valorPwm = 0;
- PWM1_Set_Duty((char)valorPwm);
-
+ calcularPid();
   flagsB.F1  = 0;
  }
  } while (! flagsA.F4 );
@@ -280,31 +261,61 @@ void menuVout() {
 }
 
 void menuCargaCoulomb() {
-
  Lcd_Chr (1,1, ' ');
  Lcd_Chr (1,16, ' ');
- Lcd_Chr(1, 9, 'F');
+ Lcd_Chr(1, 11, ':');
+ Lcd_Chr(2, 6, 'u');
+ Lcd_Chr_Cp('C');
+ Lcd_Chr(2, 9, '=');
+ Lcd_Chr(2, 14, 'V');
+
+  flagsA.F5  = 1;
 
  do {
+ setCarga();
+ if ( flagsB.F1 ) {
+ calcularPid();
+  flagsB.F1  = 0;
+ }
  } while(! flagsA.F4 );
 
  Lcd_Cmd(_LCD_CLEAR);
-}
-
-void menuNumeroEletrons() {
-
- Lcd_Chr (1,1, ' ');
- Lcd_Chr (1,16, ' ');
- Lcd_Chr(1, 12, ':');
-
- do {
- } while (! flagsA.F4 );
-
- Lcd_Cmd(_LCD_CLEAR);
+ PWM1_Set_Duty(0);
+ cargaDesejada = 0;
+ tensaoDesejada = 0;
   flagsA.F7  = 0;
 }
 
+void menuNumeroEletrons() {
+ Lcd_Chr (1,1, ' ');
+ Lcd_Chr (1,16, ' ');
+ Lcd_Chr(1, 12, ':');
+ Lcd_Chr(2, 10, '=');
+ Lcd_Chr(2, 15, 'V');
+
+  flagsA.F5  = 1;
+
+ do {
+
+
+
+ setNumeroEletrons();
+ if ( flagsB.F1 ) {
+ calcularPid();
+  flagsB.F1  = 0;
+ }
+
+
+ } while (! flagsA.F4 );
+
+ Lcd_Cmd(_LCD_CLEAR);
+ PWM1_Set_Duty(0);
+  flagsA.F7  = 0;
+ tensaoDesejada = 0;
+}
+
 void setSetPoint() {
+
  if (! PORTB.F0 ) {
   flagsA.F1  = 1;
  }
@@ -312,8 +323,8 @@ void setSetPoint() {
  if ( PORTB.F0  &&  flagsA.F1 ) {
   flagsA.F1  = 0;
  tensaoDesejada++;
- if (tensaoDesejada > 25) {
- tensaoDesejada = 25;
+ if (tensaoDesejada > 50) {
+ tensaoDesejada = 50;
  }
   flagsA.F5  = 1;
  }
@@ -332,24 +343,110 @@ void setSetPoint() {
  }
 
  if ( flagsA.F5 ) {
- calculoLcd();
+ calculoLcd('V');
   flagsA.F5  = 0;
  }
 }
 
-void calculoLcd() {
+void setCarga() {
+ if (! PORTB.F0 ) {
+  flagsA.F1  = 1;
+ }
 
- char dezenaLcd, unidadeLcd;
- dezenaLcd = 0x00;
- unidadeLcd = 0x00;
+ if ( PORTB.F0  &&  flagsA.F1 ) {
+  flagsA.F1  = 0;
+ cargaDesejada += 10;
+  flagsA.F5  = 1;
+ if (cargaDesejada > 250) cargaDesejada = 250;
+ tensaoDesejada = cargaDesejada / 10;
+ }
 
+ if (! PORTB.F3 ) {
+  flagsA.F2  = 1;
+ }
 
- dezenaLcd = (((tensaoDesejada / 10) % 10) + '0');
- unidadeLcd = ((tensaoDesejada % 10) + '0');
+ if ( PORTB.F3  &&  flagsA.F2 ) {
+  flagsA.F2  = 0;
+ cargaDesejada -= 10;
+  flagsA.F5  = 1;
+ if (cargaDesejada < 0) cargaDesejada = 0;
+ tensaoDesejada = cargaDesejada / 10;
+ }
 
- Lcd_Chr(2, 12, dezenaLcd);
+ if ( flagsA.F5 ) {
+  flagsA.F5  = 0;
+ calculoLcd('C');
+ }
+
+}
+
+void setNumeroEletrons() {
+ if (! PORTB.F0 ) {
+  flagsA.F1  = 1;
+ }
+
+ if (! PORTB.F3 ) {
+  flagsA.F2  = 1;
+ }
+
+ if ( PORTB.F0  &&  flagsA.F1 ) {
+  flagsA.F1  = 0;
+ tensaoDesejada++;
+ if (tensaoDesejada > 25)
+ tensaoDesejada = 25;
+  flagsA.F5  = 1;
+ }
+
+ if ( PORTB.F3  &&  flagsA.F2 ) {
+  flagsA.F2  = 0;
+ tensaoDesejada--;
+  flagsA.F5  = 1;
+ }
+
+ if ( flagsA.F5 ) {
+  flagsA.F5  = 0;
+ calculoLcd('E');
+ }
+
+}
+
+void calculoLcd(char modo) {
+
+ char _centenaLcd = 0, _dezenaLcd = 0, _unidadeLcd = 0;
+
+ switch (modo) {
+ case 'V':
+ Lcd_Chr(2, 12, (((tensaoDesejada / 10) % 10) + '0'));
  Lcd_Chr(2, 13, '.');
- Lcd_Chr(2, 14, unidadeLcd);
+ Lcd_Chr(2, 14, ((tensaoDesejada % 10) + '0'));
+ break;
+
+ case 'C':
+ Lcd_Chr(2, 3, ((cargaDesejada / 100) % 10) + '0');
+ Lcd_Chr_Cp((((cargaDesejada / 10) % 10) + '0'));
+ Lcd_Chr_Cp(((cargaDesejada % 10) + '0'));
+ Lcd_Chr(2, 11, (((tensaoDesejada / 10) % 10) + '0'));
+ Lcd_Chr_Cp('.');
+ Lcd_Chr_Cp(((tensaoDesejada % 10) + '0'));
+ break;
+
+ case 'E':
+ _unidadeLcd = ((tensaoDesejada % 10) + '0');
+ _dezenaLcd = ((tensaoDesejada / 10) % 10) + '0';
+
+ Lcd_Chr(2, 2, _dezenaLcd);
+ Lcd_Chr_Cp(_unidadeLcd);
+ Lcd_Chr_Cp('*');
+ Lcd_Chr_Cp('6');
+ Lcd_Chr_Cp('.');
+ Lcd_Chr_Cp('2');
+ Lcd_Chr_Cp('5');
+ Lcd_Chr(2, 12, _dezenaLcd);
+ Lcd_Chr_Cp('.');
+ Lcd_Chr_Cp(_unidadeLcd);
+ break;
+ }
+
 
 }
 
@@ -371,19 +468,26 @@ int filtrarLeitura() {
 
 }
 
-
-void enviarDadosSerial(int *leituraAdcPtr) {
- static char _unidadeLeitura,_dezenaLeitura,
- _centenaLeitura, _milharLeitura;
+void calcularPid() {
+ leituraAdc = filtrarLeitura();
 
 
- _centenaLeitura = (((*leituraAdcPtr / 100) % 10) + '0');
- _dezenaLeitura = (((*leituraAdcPtr / 10) % 10) + '0');
- _unidadeLeitura = ((*leituraAdcPtr % 10) + '0');
+ valorIdealAdc = (int)tensaoDesejada * 20.46;
 
 
- UART1_Write(_centenaLeitura);
- UART1_Write(_dezenaLeitura);
- UART1_Write(_dezenaLeitura);
- UART1_Write(';');
+ erroMedidas = (valorIdealAdc - leituraAdc);
+ integral = integral + ganhoIntegral * ((erroMedidas + ultimoErro) / 2) * 0.010;
+
+ if (integral > 255) integral = 255;
+ else if (integral < -255) integral = -255;
+
+ derivada = ganhoDerivativo * (erroMedidas - ultimoErro) / 0.010;
+
+ ultimoErro = erroMedidas;
+
+ valorPwm = (ganhoProporcional * ((int)erroMedidas >> 2)) + integral + derivada;
+
+ if (valorPwm > 255) valorPwm = 255;
+ else if (valorPwm < 0) valorPwm = 0;
+ PWM1_Set_Duty((char)valorPwm);
 }
