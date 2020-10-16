@@ -1,0 +1,94 @@
+<svg width="564" height="239" viewBox="0 0 564 239" fill="none" xmlns="http://www.w3.org/2000/svg">
+<line y1="119.5" x2="25" y2="119.5" stroke="black"/>
+<rect x="25.5" y="112.5" width="49" height="14" fill="#BEBEBE" stroke="black"/>
+<rect x="100.5" y="158.5" width="40" height="4" fill="#C4C4C4" stroke="black"/>
+<rect x="100.5" y="168.5" width="40" height="4" fill="#C4C4C4" stroke="black"/>
+<line x1="75" y1="119.5" x2="121" y2="119.5" stroke="black"/>
+<line x1="120.5" y1="158" x2="120.5" y2="120" stroke="black"/>
+<line x1="120.5" y1="211" x2="120.5" y2="173" stroke="black"/>
+<line x1="105" y1="210.5" x2="135" y2="210.5" stroke="black"/>
+<line x1="110" y1="214.5" x2="130" y2="214.5" stroke="black"/>
+<line x1="115" y1="217.5" x2="125" y2="217.5" stroke="black"/>
+<line x1="120" y1="119.5" x2="208" y2="119.5" stroke="black"/>
+<line x1="223" y1="119.5" x2="290" y2="119.5" stroke="black"/>
+<line x1="227" y1="119.5" x2="232" y2="119.5" stroke="#F0F0F0"/>
+<line x1="221" y1="119.5" x2="222" y2="119.5" stroke="#F0F0F0"/>
+<line x1="237" y1="119.5" x2="242" y2="119.5" stroke="#F0F0F0"/>
+<line x1="247" y1="119.5" x2="252" y2="119.5" stroke="#F0F0F0"/>
+<line x1="257" y1="119.5" x2="262" y2="119.5" stroke="#F0F0F0"/>
+<line x1="267" y1="119.5" x2="272" y2="119.5" stroke="#F0F0F0"/>
+<line x1="277" y1="119.5" x2="282" y2="119.5" stroke="#F0F0F0"/>
+<line x1="287" y1="119.5" x2="289" y2="119.5" stroke="#F0F0F0"/>
+<path d="M208.5 115.42L221.348 119.5L208.5 123.58V115.42Z" fill="#BEBEBE" stroke="black"/>
+<rect x="289" width="275" height="239" rx="6" fill="#1E1E1E"/>
+<rect x="296" y="6" width="261" height="227" fill="#E8E8E8"/>
+<g clip-path="url(#clip0)">
+<path opacity="0.1" d="M320 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M334.571 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M349.143 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M363.714 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M378.286 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M392.857 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M407.428 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M422 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M436.572 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M451.143 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M465.714 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M480.286 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M494.857 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M509.428 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M524 221V17" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 221H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 206.428H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 191.857H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 177.286H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 162.714H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 148.143H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 133.572H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 119H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 104.428H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 89.8572H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 75.2855H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 60.7143H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 46.1428H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 31.5714H524" stroke="black" stroke-width="2"/>
+<path opacity="0.1" d="M320 17H524" stroke="black" stroke-width="2"/>
+<path d="M422 119C422 119 422 119 335 119" stroke="black" stroke-width="2"/>
+<path d="M520.226 122.808C520.464 121.38 523.082 119.238 523.796 119C523.082 118.762 520.464 116.62 520.226 115.192" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M422 119C422 119 422 119 523.286 119" stroke="black" stroke-width="2"/>
+<path d="M331 216.716C332.428 216.954 334.57 219.572 334.808 220.286C335.046 219.572 337.188 216.954 338.616 216.716" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M335 119C335 119 335 119 335 220.286" stroke="black" stroke-width="2"/>
+<path d="M338.616 21.57C337.188 21.332 335.046 18.714 334.808 18C334.57 18.714 332.428 21.332 331 21.57" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M335 119C335 119 335 119 335 17.714" stroke="black" stroke-width="2"/>
+<path d="M436.572 122.4V115.6" stroke="black"/>
+<path d="M422 122.4V115.6" stroke="black"/>
+<path d="M451.143 122.4V115.6" stroke="black"/>
+<path d="M465.714 122.4V115.6" stroke="black"/>
+<path d="M480.286 122.4V115.6" stroke="black"/>
+<path d="M494.857 122.4V115.6" stroke="black"/>
+<path d="M509.428 122.4V115.6" stroke="black"/>
+<path d="M407.428 122.4V115.6" stroke="black"/>
+<path d="M392.857 122.4V115.6" stroke="black"/>
+<path d="M378.286 122.4V115.6" stroke="black"/>
+<path d="M363.714 122.4V115.6" stroke="black"/>
+<path d="M349.143 122.4V115.6" stroke="black"/>
+<path d="M334.571 122.4V115.6" stroke="black"/>
+<path d="M332 104.428H338.8" stroke="black"/>
+<path d="M332 89.8572H338.8" stroke="black"/>
+<path d="M332 75.2855H338.8" stroke="black"/>
+<path d="M332 60.7143H338.8" stroke="black"/>
+<path d="M332 46.1428H338.8" stroke="black"/>
+<path d="M332 31.5714H338.8" stroke="black"/>
+<path d="M332 133.572H338.8" stroke="black"/>
+<path d="M332 148.143H338.8" stroke="black"/>
+<path d="M332 162.714H338.8" stroke="black"/>
+<path d="M332 177.286H338.8" stroke="black"/>
+<path d="M332 191.857H338.8" stroke="black"/>
+<path d="M332 206.428H338.8" stroke="black"/>
+</g>
+<defs>
+<clipPath id="clip0">
+<rect width="221" height="221" fill="white" transform="translate(320)"/>
+</clipPath>
+</defs>
+</svg>
